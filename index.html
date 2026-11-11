@@ -1,0 +1,1860 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aduan Check Pro</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f4f8; color: #333; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .hidden { display: none !important; }
+
+        /* =========================================
+           PANTALLA: LOGIN
+           ========================================= */
+        #login-view { width: 100%; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .login-wrapper { background: linear-gradient(135deg, #093766 0%, #061a35 100%); width: 100%; max-width: 400px; min-height: 600px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; padding: 40px 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .logo-container { text-align: center; margin-bottom: 30px; }
+        .logo { display: flex; align-items: center; justify-content: center; margin-bottom: 15px; font-size: 26px; font-weight: 800; }
+        .cube-icon { width: 35px; height: 35px; border: 3px solid #fff; margin-right: 12px; position: relative; display: inline-block; }
+        .cube-icon::before { content: ''; position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; border: 2px solid #fff; }
+        .logo-text-white { color: #ffffff; margin-right: 5px; }
+        .logo-text-green { color: #00b359; }
+        .subtitle { color: #ffffff; font-size: 13px; text-align: center; line-height: 1.4; }
+        .form-card { background-color: #ffffff; width: 100%; border-radius: 10px; padding: 30px 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .input-group { margin-bottom: 20px; width: 100%; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #1a2b4c; font-size: 13px; }
+        .input-wrapper { position: relative; }
+        .input-wrapper input, .input-wrapper select { width: 100%; padding: 10px 12px; border: 1px solid #e0e6ed; border-radius: 6px; font-size: 13px; outline: none; color: #4a5568; background-color: #fff; }
+        .input-wrapper input:focus, .input-wrapper select:focus { border-color: #00b359; }
+        .eye-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #1a2b4c; }
+        .forgot-password { display: block; margin-bottom: 25px; color: #2b6cb0; text-decoration: none; font-size: 13px; font-weight: 500; }
+        .btn-submit { width: 100%; background-color: #00994d; color: #ffffff; border: none; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-submit:hover { background-color: #008040; }
+        .footer { margin-top: auto; color: #ffffff; font-size: 11px; text-align: center; opacity: 0.8; padding-top: 30px; }
+
+        /* =========================================
+           PANTALLA: APLICACIÓN PRINCIPAL
+           ========================================= */
+        #app-view { width: 100%; height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: center; }
+        .dashboard-wrapper { width: 100%; max-width: 1200px; height: 90vh; min-width: 0; background-color: #f8f9fa; border-radius: 12px; display: flex; box-shadow: 0 5px 25px rgba(0,0,0,0.15); overflow: hidden; border: 1px solid #e0e6ed; }
+        
+        .sidebar { width: 240px; background-color: #0a2540; color: #fff; padding: 20px 0; display: flex; flex-direction: column; flex-shrink: 0; }
+        .sidebar-logo { display: flex; align-items: center; padding: 0 20px; margin-bottom: 30px; font-weight: bold; font-size: 16px; cursor: pointer;}
+        .sidebar-logo .cube-icon { width: 20px; height: 20px; border-width: 2px; margin-right: 10px; }
+        .sidebar-logo .cube-icon::before { border-width: 1px; top: 2px; left: 2px; right: 2px; bottom: 2px; }
+        .nav-menu { list-style: none; }
+        .nav-item { padding: 12px 20px; margin: 4px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; color: #cbd5e1; display: flex; align-items: center; transition: 0.3s; }
+        .nav-item:hover { background-color: rgba(255,255,255,0.1); }
+        .nav-item.active { background-color: #00994d; color: #fff; font-weight: 600; }
+        .nav-icon { margin-right: 12px; font-size: 16px; }
+
+        .main-content { flex: 1; min-width: 0; display: flex; flex-direction: column; background-color: #ffffff; overflow: hidden; }
+        .top-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #edf2f7; padding: 20px 30px; }
+        .header-title { font-size: 18px; font-weight: bold; color: #1a2b4c; }
+        .header-user { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #4a5568; cursor: pointer; }
+        .user-avatar { background-color: #e2e8f0; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
+        .content-scrollable { flex: 1; min-height: 0; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; }
+
+        /* Botones Globales */
+        .table-card { border: 1px solid #edf2f7; border-radius: 10px; padding: 20px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .btn-green-action { background-color: #00994d; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; padding: 12px 25px; font-size: 13px;}
+        .btn-green-action:hover { background-color: #008040; }
+        .btn-red-action { background-color: #e53e3e; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; padding: 12px 25px; font-size: 13px;}
+        .btn-red-action:hover { background-color: #c53030; }
+        .btn-outline { background-color: #fff; color: #3182ce; border: 1px solid #e0e6ed; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; padding: 12px 25px; font-size: 13px;}
+        .btn-outline:hover { background-color: #f8f9fa; border-color: #cbd5e1; }
+        .btn-blue-dark { background-color: #1e293b; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; padding: 12px 25px; font-size: 13px;}
+        .btn-blue-dark:hover { background-color: #0f172a; }
+        .btn-full { width: 100%; padding: 12px; background-color: #00994d; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; text-align: center; font-size: 13px; margin-bottom: 15px; transition: 0.3s; }
+        .btn-full:hover { background-color: #008040; }
+
+        /* TABLA */
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        th { color: #4a5568; font-weight: 600; padding: 12px 10px; border-bottom: 2px solid #edf2f7; }
+        td { padding: 12px 10px; border-bottom: 1px solid #edf2f7; color: #2d3748; vertical-align: middle; }
+        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .table-title { font-size: 15px; font-weight: bold; color: #2d3748; }
+        .table-link { font-size: 12px; color: #3182ce; text-decoration: none; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-block; text-align: center; }
+        .status-revision { background-color: #feebc8; color: #c05621; border: 1px solid #fbd38d; }
+        .status-aprobada { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
+        .status-obs { background-color: #fed7d7; color: #9b2c2c; border: 1px solid #feb2b2; }
+
+        /* DASHBOARD */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .stat-card { border: 1px solid #edf2f7; border-radius: 10px; padding: 15px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .stat-title { font-size: 12px; color: #718096; margin-bottom: 10px; font-weight: 600; }
+        .stat-value { font-size: 28px; font-weight: bold; }
+        .text-green { color: #00b359; } .text-orange { color: #dd6b20; } .text-red { color: #e53e3e; }
+        .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .chart-card { border: 1px solid #edf2f7; border-radius: 10px; padding: 20px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .chart-header { font-size: 15px; font-weight: bold; color: #2d3748; margin-bottom: 20px; }
+        .line-chart-container { width: 100%; height: 180px; position: relative; }
+        .x-axis { position: absolute; bottom: 0; width: 100%; display: flex; justify-content: space-between; font-size: 11px; color: #a0aec0; }
+        .y-axis { position: absolute; left: 0; height: 100%; display: flex; flex-direction: column-reverse; justify-content: space-between; font-size: 11px; color: #a0aec0; padding-right: 10px; }
+        .svg-chart { width: calc(100% - 30px); height: calc(100% - 20px); margin-left: 30px; overflow: visible; }
+        .pie-container { display: flex; align-items: center; gap: 20px; }
+        .pie-chart { width: 130px; height: 130px; border-radius: 50%; background: conic-gradient(#4285F4 0 35%, #34A853 35% 65%, #FBBC05 65% 85%, #EA4335 85% 100%); }
+        .pie-legend { display: flex; flex-direction: column; gap: 12px; font-size: 12px; color: #4a5568; }
+        .legend-item { display: flex; align-items: center; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot.blue { background-color: #4285F4; } .dot.green { background-color: #34A853; } .dot.orange { background-color: #FBBC05; } .dot.red { background-color: #EA4335; }
+
+        /* FASES 3 y 4 */
+        .form-section-title { font-size: 14px; font-weight: 700; color: #1a2b4c; margin-top: 15px; margin-bottom: 15px; border-bottom: 1px solid #edf2f7; padding-bottom: 5px; }
+        .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .product-confirmation-grid { display: grid; grid-template-columns: 250px 1fr; gap: 30px; margin-bottom: 20px; }
+        .requirements-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+        .req-card { border: 1px solid #e0e6ed; border-radius: 8px; padding: 15px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .req-header { font-size: 11px; font-weight: 600; color: #4a5568; display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+        .req-value { font-size: 22px; font-weight: bold; color: #1a2b4c; }
+
+        /* FASE 5 Y 14: MOTOR AUTOMÁTICO / REVALIDACIÓN */
+        .motor-timeline { display: flex; justify-content: center; align-items: center; margin-bottom: 40px; gap: 10px;}
+        .motor-dot { width: 22px; height: 22px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; color: white; transition: 0.4s; }
+        .motor-dot.green { background-color: #16a34a; }
+        .motor-dot.lightblue { background-color: #bae6fd; color: #0284c7; }
+        .motor-dot.darkblue { background-color: #1e3a8a; }
+        .motor-line { height: 2px; width: 40px; background-color: #e2e8f0; transition: background-color 0.4s ease; }
+        .motor-spinner-container { text-align: center; margin-bottom: 30px; height: 95px; }
+        .motor-spinner { width: 60px; height: 60px; border: 4px solid #e2e8f0; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+        .motor-list { border: 1px solid #edf2f7; border-radius: 8px; padding: 10px 20px; margin-bottom: 25px; background: #fff; }
+        .motor-list-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #edf2f7; font-size: 13px; }
+        .motor-list-item:last-child { border-bottom: none; }
+        .motor-check { background: #16a34a; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; margin-right: 15px; font-weight: bold; transition: 0.3s;}
+        .motor-label { color: #4a5568; width: 45%; }
+        .motor-value { color: #1a2b4c; font-weight: 700; }
+
+        /* FASE 6: DOCUMENTOS */
+        .tabs-header { display: flex; border: 1px solid #e0e6ed; border-radius: 6px; overflow: hidden; margin-bottom: 20px; background: #f8f9fa;}
+        .tab-btn { flex: 1; padding: 12px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; background: transparent; color: #4a5568; border: none; border-right: 1px solid #e0e6ed; transition: 0.3s; }
+        .tab-btn:last-child { border-right: none; }
+        .tab-btn.active { background: #1a2b4c; color: #fff; }
+        .doc-list { display: flex; flex-direction: column; }
+        .doc-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 10px; border-bottom: 1px solid #edf2f7; }
+        .doc-item:last-child { border-bottom: none; }
+        .doc-name { display: flex; align-items: center; gap: 15px; font-size: 13px; color: #1a2b4c; font-weight: 500;}
+        .badge-cargado { background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; min-width: 90px; text-align: center; transition: 0.3s;}
+        .badge-pendiente-orange { background-color: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; min-width: 90px; text-align: center; cursor: pointer; transition: 0.2s; position: relative;}
+        .badge-pendiente-red { background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; min-width: 90px; text-align: center; cursor: pointer; transition: 0.2s; position: relative;}
+        .badge-pendiente-red:hover, .badge-pendiente-orange:hover { transform: scale(1.05); }
+        .badge-pendiente-red::after, .badge-pendiente-orange::after { content: '⇧ Subir'; position: absolute; top: -25px; left: 50%; transform: translateX(-50%); background: #1a2b4c; color: #fff; font-size: 10px; padding: 4px 8px; border-radius: 4px; opacity: 0; transition: 0.2s; pointer-events: none; z-index: 999;}
+        .badge-pendiente-red:hover::after, .badge-pendiente-orange:hover::after { opacity: 1; }
+        .legend-container { display: flex; align-items: center; gap: 15px; font-size: 12px; color: #4a5568; font-weight: 500;}
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid transparent; }
+        .dot-green { border-color: #16a34a; background-color: #dcfce7; }
+        .dot-orange { border-color: #ea580c; background-color: #ffedd5; }
+        .dot-red { border-color: #dc2626; background-color: #fee2e2; }
+
+        /* FASE 7 y 8: OCR & PROCESAMIENTO */
+        .ocr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+        .doc-preview { height: 350px; border: 1px solid #cbd5e1; border-radius: 8px; background: #f8f9fa; overflow: hidden; position: relative; padding: 15px; }
+        .doc-preview-lines { width: 100%; height: 100%; background: repeating-linear-gradient( transparent, transparent 10px, #e2e8f0 10px, #e2e8f0 12px ); opacity: 0.5; }
+        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #edf2f7; font-size: 13px; }
+        .info-label { color: #718096; }
+        .info-value { color: #1a2b4c; font-weight: 600; }
+        .progress-container { background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden; margin-top: 10px; width: 100%; }
+        .progress-bar { background: #22c55e; height: 100%; width: 0%; transition: width 0.1s linear; }
+        .proc-steps-wrapper { display: flex; justify-content: center; align-items: center; margin-bottom: 40px; padding: 20px 0;}
+        .proc-step { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .proc-circle { width: 65px; height: 65px; border-radius: 50%; border: 2px solid #3b82f6; display: flex; align-items: center; justify-content: center; background: #fff; color: #1e293b; font-size: 22px; position: relative; z-index: 2; box-shadow: inset 0 0 0 4px #eff6ff; }
+        .proc-label { font-size: 12px; font-weight: 500; color: #475569; }
+        .proc-line { width: 50px; height: 1px; background: #cbd5e1; margin-bottom: 25px; }
+        .proc-checklist { list-style: none; max-width: 400px; margin: 0 auto 40px auto; display: flex; flex-direction: column; gap: 15px; }
+        .proc-checklist li { display: flex; align-items: center; gap: 15px; font-size: 14px; color: #334155; font-weight: 500; }
+        .square-check { width: 20px; height: 20px; background-color: #22c55e; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold; }
+
+        /* FASE 9: RESULTADO GENERAL */
+        .result-cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
+        .res-card { border: 1px solid #e0e6ed; border-radius: 8px; padding: 15px; text-align: center; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .res-label { font-size: 12px; color: #4a5568; font-weight: 600; margin-bottom: 5px; }
+        .res-val { font-size: 28px; font-weight: bold; }
+        .score-section { display: flex; align-items: center; gap: 40px; margin-bottom: 30px; }
+        .score-circle { width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#16a34a 0% 92%, #e2e8f0 92% 100%); display: flex; align-items: center; justify-content: center; transition: 0.5s; flex-shrink: 0; }
+        .score-inner { width: 130px; height: 130px; border-radius: 50%; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .score-number { font-size: 32px; font-weight: bold; color: #1a2b4c; }
+        .score-text { font-size: 10px; color: #718096; }
+        .score-info { flex: 1; }
+        .score-status { font-size: 15px; font-weight: 700; color: #1a2b4c; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .score-desc { font-size: 13px; color: #4a5568; margin-bottom: 20px; }
+        .score-action-buttons { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
+        .entities-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px;}
+        .entity-card { border: 1px solid #e0e6ed; border-radius: 8px; padding: 15px; background: #f8fafc; }
+        .entity-name { font-size: 11px; font-weight: 600; color: #4a5568; margin-bottom: 10px; }
+        .entity-pct { font-size: 20px; font-weight: bold; color: #1a2b4c; }
+
+        /* FASE 10: INCONSISTENCIAS */
+        .inc-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
+        .inc-item { display: flex; align-items: center; border-radius: 8px; padding: 15px; cursor: pointer; transition: 0.3s; }
+        .inc-item:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .inc-item.red { background: #fff5f5; border: 1px solid #fed7d7; }
+        .inc-item.orange { background: #fffaf0; border: 1px solid #feebc8; }
+        .inc-icon { width: 24px; height: 24px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; margin-right: 15px; flex-shrink: 0;}
+        .inc-icon.red { background: #e53e3e; }
+        .inc-icon.orange { background: #dd6b20; }
+        .inc-details { flex: 1; }
+        .inc-title { font-size: 13px; font-weight: bold; color: #1a2b4c; margin-bottom: 4px; }
+        .inc-desc { font-size: 12px; color: #4a5568; }
+        .inc-badge { padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid; }
+        .inc-badge.red { color: #e53e3e; border-color: #feb2b2; background: #fff; }
+        .inc-badge.orange { color: #dd6b20; border-color: #fbd38d; background: #fff; }
+
+        /* FASE 11: DETALLE DEL ERROR */
+        .error-alert { background: #fff5f5; border: 1px solid #fed7d7; border-radius: 8px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .error-alert-icon { width: 30px; height: 30px; background: #e53e3e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
+        .error-alert-content h4 { color: #e53e3e; font-size: 13px; margin-bottom: 3px; }
+        .error-alert-content p { color: #e53e3e; font-size: 14px; font-weight: 500; }
+        .comp-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #edf2f7; border-radius: 8px; overflow: hidden; }
+        .comp-table th, .comp-table td { padding: 12px 15px; border-bottom: 1px solid #edf2f7; font-size: 13px; }
+        .comp-table th { background: #f8fafc; font-weight: 600; color: #4a5568; text-align: left; }
+        .comp-table td { color: #1a2b4c; font-weight: 500; }
+        .comp-table tr:last-child td { border-bottom: none; }
+        .text-red-crit { color: #e53e3e !important; }
+        .desc-box { background: #f8fafc; border: 1px solid #edf2f7; border-radius: 8px; padding: 15px; margin-bottom: 25px; }
+        .desc-box h4 { font-size: 13px; color: #1a2b4c; margin-bottom: 8px; }
+        .desc-box p { font-size: 13px; color: #4a5568; line-height: 1.5; }
+
+        /* FASE 13: CORRECCIÓN GUIADA */
+        .corr-alert { background: #fff; border: 1px solid #e0e6ed; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .corr-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #edf2f7; padding-bottom: 15px; }
+        .corr-icon { color: #e53e3e; font-weight: bold; font-size: 18px; }
+        .corr-title { font-size: 15px; font-weight: bold; color: #e53e3e; }
+        .corr-val-actual { font-size: 14px; color: #4a5568; margin-bottom: 5px; }
+        .corr-val-actual strong { color: #1a2b4c; font-size: 16px; }
+        .corr-val-correcto { font-size: 12px; color: #718096; margin-bottom: 25px; }
+        .corr-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
+        .corr-opt-title { font-size: 12px; font-weight: 600; color: #1a2b4c; margin-bottom: 5px; }
+        .radio-option { display: flex; align-items: center; gap: 10px; padding: 12px 15px; border: 1px solid #e0e6ed; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 13px; color: #4a5568; font-weight: 500;}
+        .radio-option.selected { border-color: #3b82f6; background: #eff6ff; color: #1e3a8a; }
+        .radio-circle { width: 16px; height: 16px; border: 2px solid #cbd5e1; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .radio-option.selected .radio-circle { border-color: #3b82f6; }
+        .radio-option.selected .radio-circle::after { content: ''; width: 8px; height: 8px; background: #3b82f6; border-radius: 50%; }
+
+        /* FASE 15: SIMULADOR DE RIESGO */
+        .gauge-container { width: 200px; height: 100px; overflow: hidden; position: relative; margin: 0 auto; }
+        .gauge-arc { width: 200px; height: 200px; border-radius: 50%; background: conic-gradient(from 270deg, #22c55e 0 45deg, #eab308 45deg 90deg, #f97316 90deg 135deg, #ef4444 135deg 180deg, transparent 180deg 360deg); }
+        .gauge-center-mask { width: 140px; height: 140px; background: #fff; border-radius: 50%; position: absolute; bottom: -70px; left: 30px; }
+        .gauge-needle { width: 4px; height: 80px; background: #1e293b; position: absolute; bottom: 0; left: 50%; transform-origin: bottom center; transform: translateX(-50%) rotate(0deg); border-radius: 4px 4px 0 0; transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10; }
+        .gauge-pin { width: 16px; height: 16px; background: #1e293b; border-radius: 50%; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); z-index: 11; }
+
+        /* FASE 17 Y 18: ESTADÍSTICAS Y CHAT ASISTENTE */
+        .chat-container { display: flex; flex-direction: column; height: 600px; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: #f8fafc; border: 1px solid #edf2f7; border-radius: 8px 8px 0 0; }
+        .chat-msg { max-width: 70%; padding: 12px 16px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+        .chat-msg.ia { align-self: flex-start; background: #fff; border: 1px solid #e0e6ed; color: #1a2b4c; border-bottom-left-radius: 0; }
+        .chat-msg.user { align-self: flex-end; background: #eff6ff; color: #1e3a8a; border: 1px solid #bfdbfe; border-bottom-right-radius: 0; }
+        .chat-input-area { display: flex; padding: 15px; background: #fff; border: 1px solid #edf2f7; border-top: none; border-radius: 0 0 8px 8px; gap: 10px; align-items: center; }
+        .chat-input-area input { flex: 1; padding: 12px; border: 1px solid #e0e6ed; border-radius: 20px; outline: none; font-size: 13px; }
+        .chat-send-btn { background: #3b82f6; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .chat-send-btn:hover { background: #2563eb; }
+        .ai-header { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; font-weight: bold; font-size: 12px; color: #3b82f6; }
+        .ai-icon { width: 24px; height: 24px; background: #3b82f6; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+
+        /* FASE 19 y 20: REPORTES */
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .report-card { border: 1px solid #e0e6ed; border-radius: 8px; padding: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; background: #fff; }
+        .report-card:hover { border-color: #cbd5e1; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .report-card.selected { border-color: #3b82f6; background-color: #eff6ff; }
+        .report-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .report-title { font-size: 13px; font-weight: bold; color: #1a2b4c; margin-bottom: 2px; }
+        .report-desc { font-size: 11px; color: #718096; }
+
+        /* LISTA GENERAL DE DOCUMENTOS (CATÁLOGO) */
+        .ref-country-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .ref-country-card { border: 1px solid #edf2f7; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .ref-country-card h3 { color: #1a2b4c; font-size: 16px; margin-bottom: 15px; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; }
+        .ref-country-list { list-style: none; color: #4a5568; font-size: 13px; display: flex; flex-direction: column; gap: 10px; }
+
+        /* FASE 26: ALERTAS Y NOTIFICACIONES */
+        .alert-list { display: flex; flex-direction: column; }
+        .alert-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid #edf2f7; gap: 15px; }
+        .alert-item:last-child { border-bottom: none; }
+        .alert-icon-box { width: 35px; height: 35px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        .alert-icon-box.green { background: #dcfce7; color: #16a34a; }
+        .alert-icon-box.red { background: #fee2e2; color: #dc2626; }
+        .alert-icon-box.orange { background: #fef3c7; color: #d97706; }
+        .alert-text-box { flex: 1; }
+        .alert-msg { font-size: 13px; color: #1a2b4c; font-weight: 500; margin-bottom: 4px; }
+        .alert-time { font-size: 11px; color: #718096; }
+
+        /* FASE 22, 23, 24: PANTALLAS ADICIONALES (EMBALAJE, PRECINTOS, CUMPLIMIENTO) */
+        .verify-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .verify-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #f8fafc; border: 1px solid #edf2f7; border-radius: 8px; font-size: 13px; }
+        .verify-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-block; text-align: center; }
+        .verify-badge.cumple { background-color: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+        .verify-badge.coincide { background-color: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+        .image-placeholder { width: 100%; height: 140px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; margin-bottom: 20px; }
+        .image-pallets { background: #d4a373; }
+        .image-container { background: #1e3a8a; color: white; }
+        .image-bananas { background: #fcf6e3; width: 120px; height: 120px; flex-shrink: 0;}
+        .cump-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #edf2f7; font-size: 13px; }
+        .cump-row:last-child { border-bottom: none; }
+        .cump-label { color: #718096; }
+        .cump-val { color: #1a2b4c; font-weight: 600; }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes scan { 0% { top: 0%; } 50% { top: 95%; } 100% { top: 0%; } }
+    </style>
+</head>
+<body>
+
+    <!-- VISTA 1: LOGIN -->
+    <div id="login-view">
+        <div class="login-wrapper">
+            <div class="logo-container">
+                <div class="logo"><div class="cube-icon"></div><span class="logo-text-white">ADUAN</span><span class="logo-text-green">CHECK PRO</span></div>
+                <p class="subtitle">Sistema Inteligente de Gestión y Verificación<br>Documental para Exportaciones</p>
+            </div>
+            <div class="form-card">
+                <form id="login-form">
+                    <div class="input-group"><label>Usuario</label><div class="input-wrapper"><input type="text" placeholder="Ingrese su usuario" required></div></div>
+                    <div class="input-group"><label>Contraseña</label><div class="input-wrapper"><input type="password" placeholder="Ingrese su contraseña" required><span class="eye-icon">👁️</span></div></div>
+                    <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                    <button type="submit" class="btn-submit">INGRESAR</button>
+                </form>
+            </div>
+            <div class="footer">© 2025 Aduan Check Pro. Todos los derechos reservados.</div>
+        </div>
+    </div>
+
+    <!-- VISTA 2: APLICACIÓN PRINCIPAL -->
+    <div id="app-view" class="hidden">
+        <div class="dashboard-wrapper">
+            
+            <aside class="sidebar">
+                <div class="sidebar-logo" id="btn-logout" title="Haz clic para volver al login">
+                    <div class="cube-icon"></div><span class="logo-text-white">ADUAN </span><span class="logo-text-green" style="margin-left: 4px;"> CHECK PRO</span>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item active" id="nav-dashboard"><span class="nav-icon">📊</span> Dashboard</li>
+                    <li class="nav-item btn-nueva-op-global" id="nav-nueva-op"><span class="nav-icon">✨</span> Nueva Operación</li>
+                    <li class="nav-item" id="nav-exportaciones"><span class="nav-icon">🚢</span> Exportaciones</li>
+                    <li class="nav-item" id="nav-documentos-referencia"><span class="nav-icon">📄</span> Documentos</li>
+                    <li class="nav-item" id="nav-alertas"><span class="nav-icon">🔔</span> Alertas</li>
+                    <li class="nav-item" id="nav-reportes"><span class="nav-icon">📈</span> Reportes</li>
+                    <li class="nav-item" id="nav-estadisticas"><span class="nav-icon">📉</span> Estadísticas</li>
+                    <li class="nav-item" id="nav-asistente"><span class="nav-icon">💬</span> Asistente IA</li>
+                    <li class="nav-item"><span class="nav-icon">⚙️</span> Configuración</li>
+                    <li class="nav-item" id="nav-logout-btn"><span class="nav-icon">🚪</span> Cerrar Sesión</li>
+                </ul>
+            </aside>
+
+            <main class="main-content">
+                <header class="top-header">
+                    <div class="header-title" id="main-header-title">Dashboard - Exportación</div>
+                    <div class="header-user"><span>🔔</span><div class="user-avatar">👤</div><span>Usuario ▾</span></div>
+                </header>
+
+                <div class="content-scrollable">
+
+                    <!-- SECCIÓN: 2. DASHBOARD -->
+                    <div id="content-dashboard" class="app-section">
+                        <div class="stats-grid" style="margin-bottom: 25px;">
+                            <div class="stat-card"><div class="stat-title">Operaciones activas</div><div class="stat-value text-green">24</div></div>
+                            <div class="stat-card"><div class="stat-title">Documentos pendientes</div><div class="stat-value text-orange">12</div></div>
+                            <div class="stat-card"><div class="stat-title">Alertas críticas</div><div class="stat-value text-red">05</div></div>
+                            <div class="stat-card"><div class="stat-title">Operaciones aprobadas</div><div class="stat-value text-green">18</div></div>
+                        </div>
+
+                        <div class="charts-grid" style="margin-bottom: 25px;">
+                            <div class="chart-card">
+                                <div class="chart-header">Resumen de actividad</div>
+                                <div class="line-chart-container">
+                                    <div class="y-axis"><span>0</span><span>300</span><span>600</span><span>900</span></div>
+                                    <svg viewBox="0 0 100 40" class="svg-chart" preserveAspectRatio="none">
+                                        <path d="M0,35 L15,20 L30,12 L45,22 L60,10 L75,18 L90,5 L100,0" fill="none" stroke="#4285F4" stroke-width="1.5"/>
+                                        <path d="M0,35 L15,20 L30,12 L45,22 L60,10 L75,18 L90,5 L100,0 L100,40 L0,40 Z" fill="rgba(66, 133, 244, 0.15)" stroke="none"/>
+                                        <circle cx="15" cy="20" r="1.5" fill="#4285F4" stroke="#fff" stroke-width="0.5"/>
+                                        <circle cx="30" cy="12" r="1.5" fill="#4285F4" stroke="#fff" stroke-width="0.5"/>
+                                        <circle cx="45" cy="22" r="1.5" fill="#4285F4" stroke="#fff" stroke-width="0.5"/>
+                                        <circle cx="60" cy="10" r="1.5" fill="#4285F4" stroke="#fff" stroke-width="0.5"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="chart-card">
+                                <div class="chart-header">Estados de operaciones</div>
+                                <div class="pie-container">
+                                    <div class="pie-chart"></div>
+                                    <div class="pie-legend">
+                                        <div class="legend-item"><div class="dot blue"></div> En revisión</div>
+                                        <div class="legend-item"><div class="dot red"></div> Con observaciones</div>
+                                        <div class="legend-item"><div class="dot green"></div> Aprobadas</div>
+                                        <div class="legend-item"><div class="dot orange"></div> Rechazadas</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-card">
+                            <div class="table-header">
+                                <div class="table-title">Últimas operaciones</div>
+                                <a href="#" class="table-link">Ver todas</a>
+                            </div>
+                            <table>
+                                <thead><tr><th>N°</th><th>Producto</th><th>País destino</th><th>Estado</th><th>Fecha</th></tr></thead>
+                                <tbody>
+                                    <tr><td>📄 EXP-0004</td><td>Café</td><td>México</td><td><span class="status-badge status-revision">En revisión</span></td><td>06/05/2025</td></tr>
+                                    <tr><td>📄 EXP-0003</td><td>Soya</td><td>Argentina</td><td><span class="status-badge status-obs">Con observaciones</span></td><td>08/05/2025</td></tr>
+                                    <tr><td>📄 EXP-0002</td><td>Quinua</td><td>Perú</td><td><span class="status-badge status-aprobada">Aprobada</span></td><td>10/05/2025</td></tr>
+                                    <tr><td>📄 EXP-0001</td><td>Plátano fresco</td><td>Chile</td><td><span class="status-badge status-revision">En revisión</span></td><td>12/05/2025</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: EXPORTACIONES (HISTORIAL DINÁMICO) -->
+                    <div id="content-exportaciones" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px;">
+                            <h2 style="color: #1a2b4c; font-size: 20px; margin-bottom: 20px;">Registro de exportaciones</h2>
+                            <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
+                                <input type="text" placeholder="Buscar operación..." style="padding: 10px 15px; border: 1px solid #e0e6ed; border-radius: 6px; width: 300px;">
+                                <button class="btn-green-action btn-nueva-op-global">NUEVA OPERACIÓN</button>
+                            </div>
+                            <table>
+                                <thead><tr><th>N°</th><th>Producto</th><th>País destino</th><th>Estado</th><th>Fecha</th></tr></thead>
+                                <tbody id="export-table-body">
+                                    <!-- Aquí se inyectan las nuevas exportaciones -->
+                                    <tr><td>📄 EXP-0004</td><td>Café</td><td>México</td><td><span class="status-badge status-revision">En revisión</span></td><td>06/05/2025</td></tr>
+                                    <tr><td>📄 EXP-0003</td><td>Soya</td><td>Argentina</td><td><span class="status-badge status-obs">Con observaciones</span></td><td>08/05/2025</td></tr>
+                                    <tr><td>📄 EXP-0002</td><td>Quinua</td><td>Perú</td><td><span class="status-badge status-aprobada">Aprobada</span></td><td>10/05/2025</td></tr>
+                                    <tr><td>📄 EXP-0001</td><td>Plátano fresco</td><td>Chile</td><td><span class="status-badge status-revision">En revisión</span></td><td>12/05/2025</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: DOCUMENTOS (CATÁLOGO GLOBAL DE REFERENCIA) -->
+                    <div id="content-documentos-referencia" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h2 style="color: #1a2b4c; font-size: 20px;">Catálogo de Requisitos por Destino</h2>
+                                <input type="text" placeholder="Buscar país..." style="padding: 8px 15px; border: 1px solid #e0e6ed; border-radius: 6px; width: 250px;">
+                            </div>
+                            <p style="color: #4a5568; font-size: 13px; margin-bottom: 25px;">Listado general de documentos requeridos y normativas vigentes según el país de exportación. Seleccione un país para ver el detalle de los documentos que debe gestionar.</p>
+                            
+                            <div class="ref-country-grid">
+                                <div class="ref-country-card">
+                                    <h3>🇨🇱 Chile (SAG / Aduana)</h3>
+                                    <ul class="ref-country-list">
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Factura Comercial de Exportación</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Lista de Empaque (Packing List)</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Certificado Fitosanitario (SAG / SENASAG)</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Certificado de Origen (ACE)</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Documento de Transporte (CRT)</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Declaración de Exportación (DEX)</li>
+                                    </ul>
+                                </div>
+                                <div class="ref-country-card">
+                                    <h3>🇦🇷 Argentina (SENASA / AFIP)</h3>
+                                    <ul class="ref-country-list">
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Factura Comercial de Exportación</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Lista de Empaque</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Certificado Fitosanitario (SENASA)</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Certificado de Origen (MERCOSUR/ACE)</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Documento de Transporte Internacional</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Manifiesto Internacional de Carga (MIC/DTA)</li>
+                                    </ul>
+                                </div>
+                                <div class="ref-country-card">
+                                    <h3>🇵🇪 Perú (SENASA / SUNAT)</h3>
+                                    <ul class="ref-country-list">
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Factura Comercial</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Packing List</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Certificado Fitosanitario / Zoosanitario</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Certificado de Origen (Comunidad Andina)</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Póliza de Seguro</li>
+                                    </ul>
+                                </div>
+                                <div class="ref-country-card">
+                                    <h3>🇧🇷 Brasil (MAPA / Receita Federal)</h3>
+                                    <ul class="ref-country-list">
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Fatura Comercial</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Romaneio de Carga (Packing List)</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Certificado Fitossanitário (MAPA)</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Certificado de Origem (MERCOSUL)</li>
+                                        <li><span style="color:#16a34a; font-weight:bold;">✓</span> Conhecimento de Embarque</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 26. NOTIFICACIONES Y ALERTAS -->
+                    <div id="content-alertas" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px; max-width: 600px; margin: 0 auto;">
+                            <h2 style="color: #1a2b4c; font-size: 20px; margin-bottom: 20px; border-bottom: 1px solid #edf2f7; padding-bottom: 10px;">Notificaciones</h2>
+                            
+                            <div class="alert-list">
+                                <div class="alert-item">
+                                    <div class="alert-icon-box green">📄</div>
+                                    <div class="alert-text-box">
+                                        <div class="alert-msg">Operación validada correctamente</div>
+                                        <div class="alert-time">12/05/2025 - 11:00</div>
+                                    </div>
+                                </div>
+                                <div class="alert-item">
+                                    <div class="alert-icon-box green">🌿</div>
+                                    <div class="alert-text-box">
+                                        <div class="alert-msg">El certificado fitosanitario fue verificado</div>
+                                        <div class="alert-time">12/05/2025 - 10:45</div>
+                                    </div>
+                                </div>
+                                <div class="alert-item">
+                                    <div class="alert-icon-box red">!</div>
+                                    <div class="alert-text-box">
+                                        <div class="alert-msg">Se detectó una inconsistencia en la cantidad</div>
+                                        <div class="alert-time">12/05/2025 - 10:34</div>
+                                    </div>
+                                </div>
+                                <div class="alert-item">
+                                    <div class="alert-icon-box green">✓</div>
+                                    <div class="alert-text-box">
+                                        <div class="alert-msg">Documentos cargados correctamente</div>
+                                        <div class="alert-time">12/05/2025 - 10:20</div>
+                                    </div>
+                                </div>
+                                <div class="alert-item">
+                                    <div class="alert-icon-box orange">!</div>
+                                    <div class="alert-text-box">
+                                        <div class="alert-msg">Nueva actualización normativa (SAG Chile)</div>
+                                        <div class="alert-time">11/05/2025 - 16:30</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="button" class="btn-outline" style="width: 100%; margin-top: 20px;">Ver todas las notificaciones</button>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 19. LISTA DE REPORTES (VISTA PREVIA) -->
+                    <div id="content-lista-reportes" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px;">
+                            <h2 style="color: #1a2b4c; font-size: 20px; margin-bottom: 20px;">19. Reportes de Exportaciones</h2>
+                            <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
+                                <input type="text" placeholder="Buscar operación..." style="padding: 10px 15px; border: 1px solid #e0e6ed; border-radius: 6px; width: 300px;">
+                            </div>
+                            <table>
+                                <thead><tr><th>N° Operación</th><th>Producto</th><th>Fecha</th><th>Acción</th></tr></thead>
+                                <tbody id="report-table-body">
+                                    <tr><td>📄 EXP-0004</td><td>Café</td><td>06/05/2025</td><td><button class="btn-outline btn-abrir-generador" data-exp="EXP-0004" style="padding: 6px 12px; font-size: 11px;">Generar reporte</button></td></tr>
+                                    <tr><td>📄 EXP-0003</td><td>Soya</td><td>08/05/2025</td><td><button class="btn-outline btn-abrir-generador" data-exp="EXP-0003" style="padding: 6px 12px; font-size: 11px;">Generar reporte</button></td></tr>
+                                    <tr><td>📄 EXP-0002</td><td>Quinua</td><td>10/05/2025</td><td><button class="btn-outline btn-abrir-generador" data-exp="EXP-0002" style="padding: 6px 12px; font-size: 11px;">Generar reporte</button></td></tr>
+                                    <tr><td>📄 EXP-0001</td><td>Plátano fresco</td><td>12/05/2025</td><td><button class="btn-outline btn-abrir-generador" data-exp="EXP-0001" style="padding: 6px 12px; font-size: 11px;">Generar reporte</button></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 19. GENERACIÓN DE REPORTES (PANEL) -->
+                    <div id="content-generar-reporte" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px; max-width: 700px; margin: 0 auto;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <h2 style="color: #1a2b4c; font-size: 20px; margin-bottom: 0;">Generar Reporte: <span id="reporte-exp-title" style="color: #3b82f6;"></span></h2>
+                                <button type="button" class="btn-outline" id="btn-volver-lista-reportes" style="padding: 6px 12px; font-size: 12px;">&lt; VOLVER</button>
+                            </div>
+                            <h3 style="font-size: 15px; margin-bottom: 5px;">Tipo de reporte</h3>
+                            <p style="font-size: 12px; color: #718096; margin-bottom: 20px;">Seleccione el tipo de reporte a exportar para esta operación</p>
+
+                            <div class="report-grid">
+                                <div class="report-card selected" onclick="selectReportOption(this)">
+                                    <div class="report-icon" style="background: #e0f2fe; color: #0284c7;">📄</div>
+                                    <div><div class="report-title">Reporte de validación</div><div class="report-desc">Evaluación de requisitos</div></div>
+                                </div>
+                                <div class="report-card" onclick="selectReportOption(this)">
+                                    <div class="report-icon" style="background: #dcfce7; color: #16a34a;">📋</div>
+                                    <div><div class="report-title">Reporte de inconsistencias</div><div class="report-desc">Detalle de errores encontrados</div></div>
+                                </div>
+                                <div class="report-card" onclick="selectReportOption(this)">
+                                    <div class="report-icon" style="background: #fae8ff; color: #c026d3;">🌿</div>
+                                    <div><div class="report-title">Reporte fitosanitario</div><div class="report-desc">Cumplimiento SENASAG y SAG</div></div>
+                                </div>
+                                <div class="report-card" onclick="selectReportOption(this)">
+                                    <div class="report-icon" style="background: #ffe4e6; color: #e11d48;">🌍</div>
+                                    <div><div class="report-title">Reporte de origen y acuerdo</div><div class="report-desc">ACE y reglas de origen</div></div>
+                                </div>
+                                <div class="report-card" onclick="selectReportOption(this)">
+                                    <div class="report-icon" style="background: #ffedd5; color: #ea580c;">⏱️</div>
+                                    <div><div class="report-title">Reporte de trazabilidad</div><div class="report-desc">Historial de cambios</div></div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px; border-top: 1px solid #edf2f7; padding-top: 20px;">
+                                <div>
+                                    <div style="font-size: 13px; font-weight: bold; color: #1a2b4c; margin-bottom: 10px;">Formato de salida</div>
+                                    <div style="display: flex; gap: 15px;">
+                                        <label style="display: flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer;"><input type="radio" name="format" checked> <span style="color:#e53e3e; font-weight:bold;">PDF</span></label>
+                                        <label style="display: flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer;"><input type="radio" name="format"> <span style="color:#16a34a; font-weight:bold;">Excel</span></label>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-blue-dark" id="btn-generar-reporte">GENERAR REPORTE</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 20. COMPARTIR REPORTES -->
+                    <div id="content-compartir" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px; max-width: 650px; margin: 0 auto;">
+                            <h2 style="color: #1a2b4c; font-size: 20px; margin-bottom: 10px;">20. Compartir reportes</h2>
+                            <h3 style="font-size: 15px; margin-bottom: 5px;">Compartir Reporte</h3>
+                            <p style="font-size: 12px; color: #718096; margin-bottom: 20px;">Seleccione el método para compartir</p>
+
+                            <div class="report-grid">
+                                <div class="report-card">
+                                    <div class="report-icon" style="background: #e0f2fe; color: #0284c7;">✉️</div>
+                                    <div><div class="report-title">Enviar por correo</div><div class="report-desc">Adjunta y envía por email</div></div>
+                                </div>
+                                <div class="report-card">
+                                    <div class="report-icon" style="background: #dcfce7; color: #16a34a;">💬</div>
+                                    <div><div class="report-title">WhatsApp</div><div class="report-desc">Compartir por WhatsApp</div></div>
+                                </div>
+                                <div class="report-card">
+                                    <div class="report-icon" style="background: #ede9fe; color: #7c3aed;">⬇️</div>
+                                    <div><div class="report-title">Descargar</div><div class="report-desc">Guardar en tu dispositivo</div></div>
+                                </div>
+                                <div class="report-card">
+                                    <div class="report-icon" style="background: #f1f5f9; color: #475569;">🔗</div>
+                                    <div><div class="report-title">Enlace compartible</div><div class="report-desc">Generar enlace seguro</div></div>
+                                </div>
+                            </div>
+
+                            <div style="text-align: center; margin-top: 30px; font-size: 13px; color: #4a5568;">
+                                Reporte generado: <a href="#" style="color: #3b82f6; text-decoration: none; font-weight: bold;"><span id="link-reporte-nombre"></span>.pdf ↗</a>
+                            </div>
+                            
+                            <div style="margin-top: 25px;">
+                                <button type="button" class="btn-outline" id="btn-volver-reportes" style="padding: 8px 15px; font-size: 12px;">&lt; VOLVER</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 17. ESTADÍSTICAS / HISTORIAL -->
+                    <div id="content-estadisticas" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                                <h2 style="color: #1a2b4c; font-size: 20px;">17. Estadísticas e Historial</h2>
+                                <div class="input-wrapper" style="width: 200px;">
+                                    <select style="padding: 8px 12px;"><option>Últimos 30 días</option><option>Últimos 7 días</option></select>
+                                </div>
+                            </div>
+                            <h3 style="font-size: 15px; color: #4a5568; margin-bottom: 15px;">Registros de exportaciones</h3>
+                            <table>
+                                <thead>
+                                    <tr><th>Fecha / Hora</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>12/05/2025 10:15</td><td>Ana</td><td>Carga de factura</td><td>Factura-001-458</td></tr>
+                                    <tr><td>12/05/2025 10:30</td><td>Ana</td><td>Carga de certificado</td><td>CFE-2025-001</td></tr>
+                                    <tr><td>12/05/2025 10:40</td><td>Luis</td><td>Corrección de datos</td><td>Cantidad de cajas</td></tr>
+                                    <tr><td>12/05/2025 10:45</td><td>Luis</td><td>Revalidación automática</td><td style="color: #16a34a; font-weight: bold;">OK</td></tr>
+                                    <tr><td>12/05/2025 11:00</td><td>Sofía</td><td>Aprobación final</td><td>Operación lista</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 18. ASISTENTE VIRTUAL ADUANERO -->
+                    <div id="content-asistente" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px; height: 100%; display: flex; flex-direction: column;">
+                            <h2 style="color: #1a2b4c; font-size: 20px; margin-bottom: 20px;">18. Asistente virtual aduanero</h2>
+                            
+                            <div class="chat-container">
+                                <div class="chat-messages">
+                                    <div class="chat-msg ia">
+                                        <div class="ai-header"><div class="ai-icon">A</div> Asistente IA</div>
+                                        Hola, soy tu asistente aduanero virtual.<br>¿En qué puedo ayudarte hoy?
+                                    </div>
+                                    <div class="chat-msg user">
+                                        ¿Qué documentos necesito para exportar plátano a Chile?
+                                    </div>
+                                    <div class="chat-msg ia">
+                                        <div class="ai-header"><div class="ai-icon">A</div> Asistente IA</div>
+                                        Para exportar plátano fresco a Chile necesitas:
+                                        <ul style="margin-top: 8px; margin-bottom: 8px; padding-left: 20px; color: #4a5568;">
+                                            <li>Factura comercial</li>
+                                            <li>Lista de empaque</li>
+                                            <li>Declaración de exportación (DEX)</li>
+                                            <li>Certificado fitosanitario (SENASAG)</li>
+                                            <li>Certificado de origen (ACE)</li>
+                                            <li>Documentos de transporte</li>
+                                        </ul>
+                                        ¿Deseas que revise si ya tienes todos?
+                                    </div>
+                                </div>
+                                <div class="chat-input-area">
+                                    <input type="text" placeholder="Escribe tu consulta...">
+                                    <button class="chat-send-btn">➤</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- SECCIÓN: 3. NUEVA OPERACIÓN (Formulario de carga) -->
+                    <div id="content-nueva-op" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px;">
+                            <h2 style="color: #1a2b4c; font-size: 20px; margin-bottom: 20px;">Nueva Operación de Exportación</h2>
+                            <form id="form-nueva-op">
+                                <div class="form-section-title">Datos de la empresa</div>
+                                <div class="input-group"><label>Empresa exportadora *</label><div class="input-wrapper"><select><option>Agroexportadora del Sur S.A.</option></select></div></div>
+
+                                <div class="form-section-title">Datos del producto</div>
+                                <div class="input-group"><label>Producto *</label><div class="input-wrapper"><select><option>Plátano fresco</option></select></div></div>
+
+                                <div class="form-grid-2">
+                                    <div class="input-group">
+                                        <label>País de destino *</label>
+                                        <div class="input-wrapper">
+                                            <select>
+                                                <option>CL Chile</option>
+                                                <option>AR Argentina</option>
+                                                <option>BR Brasil</option>
+                                                <option>PE Perú</option>
+                                                <option>MX México</option>
+                                                <option>CU Cuba</option>
+                                                <option>PY Paraguay</option>
+                                                <option>UY Uruguay</option>
+                                                <option>CO Colombia</option>
+                                                <option>EC Ecuador</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="input-group"><label>Código arancelario *</label><div class="input-wrapper"><input type="text" value="0803.90.00.00"></div></div>
+                                </div>
+
+                                <div class="form-grid-3">
+                                    <div class="input-group"><label>Cantidad *</label><div class="input-wrapper"><input type="text" value="500 cajas"></div></div>
+                                    <div class="input-group"><label>Peso neto (kg) *</label><div class="input-wrapper"><input type="text" value="10,000"></div></div>
+                                    <div class="input-group"><label>Peso bruto (kg) *</label><div class="input-wrapper"><input type="text" value="11,500"></div></div>
+                                </div>
+
+                                <div class="form-grid-2">
+                                    <div class="input-group"><label>Peso FOB (USD) *</label><div class="input-wrapper"><input type="text" value="8,000.00"></div></div>
+                                    <div class="input-group"><label>Valor FOB (USD) *</label><div class="input-wrapper"><select><option>8,000.00</option></select></div></div>
+                                </div>
+
+                                <div class="form-grid-2">
+                                    <div class="input-group"><label>Aduana de salida *</label><div class="input-wrapper"><select><option>Aduana Frontera Tambo Quemado</option></select></div></div>
+                                    <div class="input-group"><label>Medio de transporte *</label><div class="input-wrapper"><select><option>Terrestre</option></select></div></div>
+                                </div>
+
+                                <div class="form-grid-2" style="align-items: end;">
+                                    <div class="input-group" style="margin-bottom: 0;">
+                                        <label>Fecha estimada de salida *</label>
+                                        <div class="input-wrapper">
+                                            <input type="text" value="25/05/2025" style="background: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%234a5568%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Crect x=%223%22 y=%224%22 width=%2218%22 height=%2218%22 rx=%222%22 ry=%222%22%3E%3C/rect%3E%3Cline x1=%2216%22 y1=%222%22 x2=%2216%22 y2=%226%22%3E%3C/line%3E%3Cline x1=%228%22 y1=%222%22 x2=%228%22 y2=%226%22%3E%3C/line%3E%3Cline x1=%223%22 y1=%2210%22 x2=%2221%22 y2=%2210%22%3E%3C/line%3E%3C/svg%3E') no-repeat 95% 50%; padding-right: 30px;">
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; justify-content: flex-end;">
+                                        <button type="button" class="btn-green-action" id="btn-continuar-a-identificacion">CONTINUAR</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 4. IDENTIFICACIÓN DE PRODUCTO -->
+                    <div id="content-identificacion" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px;">
+                            <h2 style="color: #1a2b4c; font-size: 20px; margin-bottom: 25px;">Confirmar información de la operación</h2>
+                            
+                            <div class="product-confirmation-grid">
+                                <div class="product-image-container">
+                                    <div style="width: 100%; height: 180px; background-color: #fcf6e3; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 70px; border: 1px solid #edf2f7;">🍌</div>
+                                </div>
+                                <div class="product-form-container">
+                                    <div class="input-group"><label>Producto</label><div class="input-wrapper"><select><option>Plátano fresco</option></select></div></div>
+                                    <div class="input-group">
+                                        <label>País de origen</label>
+                                        <div class="input-wrapper">
+                                            <select>
+                                                <option>BO Bolivia</option>
+                                                <option>CL Chile</option>
+                                                <option>AR Argentina</option>
+                                                <option>BR Brasil</option>
+                                                <option>PE Perú</option>
+                                                <option>MX México</option>
+                                                <option>CU Cuba</option>
+                                                <option>PY Paraguay</option>
+                                                <option>UY Uruguay</option>
+                                                <option>CO Colombia</option>
+                                                <option>EC Ecuador</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>País de destino</label>
+                                        <div class="input-wrapper">
+                                            <select>
+                                                <option>CL Chile</option>
+                                                <option>AR Argentina</option>
+                                                <option>BR Brasil</option>
+                                                <option>PE Perú</option>
+                                                <option>MX México</option>
+                                                <option>CU Cuba</option>
+                                                <option>PY Paraguay</option>
+                                                <option>UY Uruguay</option>
+                                                <option>CO Colombia</option>
+                                                <option>EC Ecuador</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 0;"><label>Acuerdo comercial aplicable</label><div class="input-wrapper"><select><option>ACE (Bolivia - Chile)</option></select></div></div>
+                                </div>
+                            </div>
+
+                            <div class="form-section-title" style="margin-top: 25px; border-bottom: none;">Requisitos identificados</div>
+                            <div class="requirements-grid">
+                                <div class="req-card"><div class="req-header"><span>📄</span> Documentos</div><div class="req-value">8</div></div>
+                                <div class="req-card"><div class="req-header"><span>🌿</span> SENASAG</div><div class="req-value">5</div></div>
+                                <div class="req-card"><div class="req-header"><span>🍇</span> SAG Chile</div><div class="req-value">6</div></div>
+                                <div class="req-card"><div class="req-header"><span>🌍</span> ACE</div><div class="req-value">2</div></div>
+                            </div>
+                            
+                            <button type="button" class="btn-full" id="btn-ver-detalle-req">VER DETALLE DE REQUISITOS</button>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <button type="button" class="btn-outline" id="btn-volver-nueva-op">&lt; VOLVER</button>
+                                <button type="button" class="btn-green-action" id="btn-continuar-a-motor">CONTINUAR</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 6. DOCUMENTOS REQUERIDOS EN OPERACIÓN -->
+                    <div id="content-documentos" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px;">
+                            <h2 style="color: #1a2b4c; font-size: 16px; margin-bottom: 20px;">Revisión de documentos de exportación</h2>
+                            <p style="font-size: 13px; color: #4a5568; margin-bottom: 20px;">Cargue los documentos para proceder a su validación automática.</p>
+                            
+                            <div class="tabs-header">
+                                <button class="tab-btn active" data-target="tab-bolivia">Bolivia (Aduana)</button>
+                                <button class="tab-btn" data-target="tab-senasag">SENASAG</button>
+                                <button class="tab-btn" data-target="tab-chile">Chile (SAG)</button>
+                                <button class="tab-btn" data-target="tab-ace">ACE</button>
+                            </div>
+
+                            <div id="tab-bolivia" class="tab-content doc-list">
+                                <div class="doc-item">
+                                    <div class="doc-name"><span>📄</span> Factura comercial de exportación</div><div class="badge-cargado">Cargado</div>
+                                </div>
+                                <div class="doc-item">
+                                    <div class="doc-name"><span>📄</span> Lista de empaque (Packing List)</div><div class="badge-cargado">Cargado</div>
+                                </div>
+                                <div class="doc-item">
+                                    <div class="doc-name"><span style="color: #f59e0b;">📄</span> Declaración de exportación (DEX)</div>
+                                    <div class="badge-pendiente-orange btn-upload-doc" data-default="badge-pendiente-orange btn-upload-doc" data-default-text="Pendiente">Pendiente</div>
+                                </div>
+                                <div class="doc-item">
+                                    <div class="doc-name"><span style="color: #ec4899;">📄</span> Documento de transporte (CRT)</div>
+                                    <div class="badge-pendiente-red btn-upload-doc" data-default="badge-pendiente-red btn-upload-doc" data-default-text="Pendiente">Pendiente</div>
+                                </div>
+                                <div class="doc-item">
+                                    <div class="doc-name"><span style="color: #ec4899;">📄</span> Manifiesto internacional de carga</div>
+                                    <div class="badge-pendiente-red btn-upload-doc" data-default="badge-pendiente-red btn-upload-doc" data-default-text="Pendiente">Pendiente</div>
+                                </div>
+                                <div class="doc-item">
+                                    <div class="doc-name"><span style="color: #f59e0b;">📄</span> Certificado de origen</div>
+                                    <div class="badge-pendiente-red btn-upload-doc" data-default="badge-pendiente-red btn-upload-doc" data-default-text="Pendiente">Pendiente</div>
+                                </div>
+                                <div class="doc-item">
+                                    <div class="doc-name"><span style="color: #3b82f6;">📄</span> Certificado fitosanitario (CFE)</div>
+                                    <div class="badge-pendiente-red btn-upload-doc" data-default="badge-pendiente-red btn-upload-doc" data-default-text="Pendiente">Pendiente</div>
+                                </div>
+                            </div>
+
+                            <div id="tab-senasag" class="tab-content doc-list hidden">
+                                <div class="doc-item">
+                                    <div class="doc-name"><span>🌿</span> Registro de empresa exportadora</div><div class="badge-cargado">Cargado</div>
+                                </div>
+                                <div class="doc-item">
+                                    <div class="doc-name"><span style="color: #ec4899;">🌿</span> Certificado Fitosanitario de Exportación</div>
+                                    <div class="badge-pendiente-red btn-upload-doc" data-default="badge-pendiente-red btn-upload-doc" data-default-text="Pendiente">Pendiente</div>
+                                </div>
+                            </div>
+
+                            <div id="tab-chile" class="tab-content doc-list hidden">
+                                <div class="doc-item">
+                                    <div class="doc-name"><span>🍇</span> Solicitud de Inspección (CDA)</div><div class="badge-cargado">Cargado</div>
+                                </div>
+                                <div class="doc-item">
+                                    <div class="doc-name"><span style="color: #ec4899;">🍇</span> Resolución de ingreso SAG</div>
+                                    <div class="badge-pendiente-red btn-upload-doc" data-default="badge-pendiente-red btn-upload-doc" data-default-text="Pendiente">Pendiente</div>
+                                </div>
+                            </div>
+
+                            <div id="tab-ace" class="tab-content doc-list hidden">
+                                <div class="doc-item">
+                                    <div class="doc-name"><span>🌍</span> Declaración Jurada de Origen</div><div class="badge-cargado">Cargado</div>
+                                </div>
+                                <div class="doc-item">
+                                    <div class="doc-name"><span style="color: #ec4899;">🌍</span> Certificado de Origen ACE visado</div>
+                                    <div class="badge-pendiente-red btn-upload-doc" data-default="badge-pendiente-red btn-upload-doc" data-default-text="Pendiente">Pendiente</div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px;">
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <button type="button" class="btn-outline" id="btn-volver-identificacion">&lt; VOLVER</button>
+                                    <div class="legend-container">
+                                        <div class="legend-item"><div class="legend-dot dot-green"></div> Cargado</div>
+                                        <div class="legend-item"><div class="legend-dot dot-orange"></div> Pendiente</div>
+                                        <div class="legend-item"><div class="legend-dot dot-red"></div> Requerido</div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-blue-dark" id="btn-ir-resultados">VER RESULTADOS &gt;</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 5. MOTOR AUTOMÁTICO DE REQUISITOS -->
+                    <div id="content-motor-requisitos" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px; max-width: 600px; margin: 0 auto;">
+                            <h2 style="color: #1a2b4c; font-size: 16px; margin-bottom: 25px;">Análisis de requisitos para exportación</h2>
+                            
+                            <!-- Timeline Animado -->
+                            <div class="motor-timeline">
+                                <div class="motor-dot green" id="m-dot-1">✓</div>
+                                <div class="motor-line" id="m-line-1"></div>
+                                <div class="motor-dot lightblue" id="m-dot-2">◐</div>
+                                <div class="motor-line" id="m-line-2"></div>
+                                <div class="motor-dot lightblue" id="m-dot-3">O</div>
+                                <div class="motor-line" id="m-line-3"></div>
+                                <div class="motor-dot lightblue" id="m-dot-4">D</div>
+                                <div class="motor-line" id="m-line-4"></div>
+                                <div class="motor-dot darkblue" id="m-dot-5">⚡</div>
+                            </div>
+
+                            <!-- Spinner de carga -->
+                            <div class="motor-spinner-container">
+                                <div class="motor-spinner" id="motor-spinner-anim"></div>
+                                <p id="motor-spinner-text" style="color: #4a5568; font-size: 13px; margin-top: 15px;">Analizando normativa, acuerdos y requisitos...</p>
+                            </div>
+
+                            <div class="motor-list">
+                                <div class="motor-list-item"><span class="motor-check">✓</span><span class="motor-label">País de destino:</span><span class="motor-value">Chile</span></div>
+                                <div class="motor-list-item"><span class="motor-check">✓</span><span class="motor-label">Acuerdo comercial:</span><span class="motor-value">ACE</span></div>
+                                <div class="motor-list-item"><span class="motor-check">✓</span><span class="motor-label">Producto:</span><span class="motor-value">Plátano fresco</span></div>
+                                <div class="motor-list-item"><span class="motor-check">✓</span><span class="motor-label">Autoridad fitosanitaria origen:</span><span class="motor-value">SENASAG</span></div>
+                                <div class="motor-list-item"><span class="motor-check">✓</span><span class="motor-label">Autoridad fitosanitaria destino:</span><span class="motor-value">SAG Chile</span></div>
+                                <div class="motor-list-item"><span class="motor-check">✓</span><span class="motor-label">Requisitos aduaneros:</span><span class="motor-value">Aduana Nacional</span></div>
+                            </div>
+
+                            <button type="button" class="btn-green-action" style="width: 100%; padding: 14px; opacity: 0.5; pointer-events: none;" id="btn-finalizar-motor">FINALIZAR</button>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 9. RESULTADO GENERAL -->
+                    <div id="content-resultado" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px;">
+                            <h2 style="color: #1a2b4c; font-size: 20px; margin-bottom: 25px;">Resultado de la Validación</h2>
+                            
+                            <!-- Tarjetas Superiores -->
+                            <div class="result-cards-grid">
+                                <div class="res-card"><div class="res-label">Documentos</div><div class="res-val" style="color: #1a2b4c;" id="val-docs">0</div></div>
+                                <div class="res-card"><div class="res-label">Correctos</div><div class="res-val" style="color: #16a34a;" id="val-correctos">0</div></div>
+                                <div class="res-card"><div class="res-label">Advertencias</div><div class="res-val" style="color: #f59e0b;" id="val-advertencias">0</div></div>
+                                <div class="res-card" style="background: #fef2f2; border-color: #fecaca;"><div class="res-label" style="color: #dc2626;">Errores críticos</div><div class="res-val" style="color: #dc2626;" id="val-criticos">0</div></div>
+                            </div>
+
+                            <!-- Gráfico central y detalles -->
+                            <div class="score-section">
+                                <div class="score-circle" id="val-score-circle">
+                                    <div class="score-inner">
+                                        <span class="score-number" id="val-score">0%</span>
+                                        <span class="score-text">Puntuación general</span>
+                                    </div>
+                                </div>
+                                <div class="score-info">
+                                    <div class="score-status" id="val-status-icon"><span style="color: #16a34a; font-size: 18px;">✓</span> Revisión completada</div>
+                                    <p class="score-desc" id="val-status-text">Se han analizado todos los documentos suministrados en la operación actual.</p>
+                                    
+                                    <div class="score-action-buttons">
+                                        <button type="button" class="btn-blue-dark" id="btn-ver-detalle-resultado" style="flex: 1; padding: 12px; height: 42px; margin-bottom: 0;">VER DETALLE</button>
+                                        <button type="button" class="btn-green-action" id="btn-finalizar-operacion" style="flex: 1; padding: 12px; height: 42px; margin-bottom: 0;">FINALIZAR OPERACIÓN DE EXPORTACIÓN</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tarjetas Inferiores -->
+                            <div class="entities-grid">
+                                <div class="entity-card"><div class="entity-name">Bolivia (Aduana)</div><div class="entity-pct" id="pct-bolivia">0%</div></div>
+                                <div class="entity-card"><div class="entity-name">SENASAG</div><div class="entity-pct" id="pct-senasag">0%</div></div>
+                                <div class="entity-card"><div class="entity-name">SAG Chile</div><div class="entity-pct" id="pct-chile">0%</div></div>
+                                <div class="entity-card"><div class="entity-name">ACE</div><div class="entity-pct" id="pct-ace">0%</div></div>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-start; align-items: center; margin-top: 25px;">
+                                <button type="button" class="btn-outline" id="btn-volver-desde-resultado">&lt; VOLVER A IDENTIFICACIÓN</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 10. CENTRO DE INCONSISTENCIAS -->
+                    <div id="content-inconsistencias" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px;">
+                            <h2 style="color: #1a2b4c; font-size: 20px; margin-bottom: 25px;">Inconsistencias detectadas</h2>
+                            
+                            <div id="inconsistencias-list" class="inc-list">
+                                <!-- Se llena dinámicamente con JS -->
+                            </div>
+
+                            <button type="button" class="btn-blue-dark" id="btn-ver-todas" style="width: 100%; margin-bottom: 25px; padding: 12px; font-size: 14px;">VER TODAS (0)</button>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <button type="button" class="btn-outline" id="btn-volver-resultado">&lt; VOLVER</button>
+                                <button type="button" class="btn-green-action" id="btn-corregir-docs">CORREGIR DOCUMENTOS</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 11. DETALLE DEL ERROR -->
+                    <div id="content-detalle-error" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px; max-width: 650px; margin: 0 auto;">
+                            
+                            <div class="error-alert">
+                                <div class="error-alert-icon">!</div>
+                                <div class="error-alert-content">
+                                    <h4>Error crítico</h4>
+                                    <p id="det-error-title">Certificado fitosanitario faltante</p>
+                                </div>
+                            </div>
+
+                            <h3 style="font-size: 14px; color: #1a2b4c; margin-bottom: 15px;">Comparación de valores</h3>
+                            <table class="comp-table">
+                                <thead>
+                                    <tr><th>Documento</th><th>Estado</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="row-factura-comp"><td>Factura comercial</td><td>Presente</td></tr>
+                                    <tr id="row-packing-comp"><td>Packing List</td><td>Presente</td></tr>
+                                    <tr><td class="text-red-crit" id="det-error-doc">Certificado fitosanitario</td><td class="text-red-crit" id="det-error-status">No encontrado</td></tr>
+                                </tbody>
+                            </table>
+
+                            <div class="desc-box">
+                                <h4>Descripción</h4>
+                                <p id="det-error-desc">El envío requiere certificado fitosanitario emitido por SENASAG para su ingreso a Chile.</p>
+                            </div>
+
+                            <button type="button" class="btn-blue-dark" id="btn-ver-recomendacion" style="width: 100%; padding: 14px;">VER RECOMENDACIÓN</button>
+                            
+                            <div style="margin-top: 15px;">
+                                <button type="button" class="btn-outline" id="btn-volver-inconsistencias">&lt; VOLVER</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 13. CORRECCIÓN GUIADA -->
+                    <div id="content-correccion" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px; max-width: 500px; margin: 0 auto;">
+                            <h2 style="color: #1a2b4c; font-size: 16px; margin-bottom: 20px;">Corregir inconsistencias</h2>
+                            
+                            <div class="corr-alert">
+                                <div class="corr-header">
+                                    <div class="corr-icon">✖</div>
+                                    <div class="corr-title" id="corr-title">Falta certificado fitosanitario</div>
+                                </div>
+                                
+                                <div class="corr-val-actual" id="corr-actual-text">
+                                    Estado actual: <strong class="text-red-crit">Documento faltante</strong>
+                                </div>
+                                <div class="corr-val-correcto" id="corr-sugerido-text">
+                                    Estado correcto: Subir el documento requerido por la entidad.
+                                </div>
+                                
+                                <div class="corr-opt-title">¿Cómo quieres corregir?</div>
+                                <div class="corr-options">
+                                    <div class="radio-option">
+                                        <div class="radio-circle"></div>
+                                        <span id="corr-opt-1">Ignorar advertencia (Bajo tu riesgo)</span>
+                                    </div>
+                                    <div class="radio-option selected">
+                                        <div class="radio-circle"></div>
+                                        <span id="corr-opt-2">Ir al panel de carga de documentos</span>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn-green-action" id="btn-aplicar-correccion" style="width: 100%; padding: 14px;">Aplicar corrección</button>
+                                <a href="#" class="btn-link">Ver historial de cambios</a>
+                            </div>
+
+                            <div style="margin-top: 15px;">
+                                <button type="button" class="btn-outline" id="btn-volver-detalle">&lt; VOLVER</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 14. REVALIDACIÓN AUTOMÁTICA -->
+                    <div id="content-revalidacion" class="app-section hidden">
+                        <div class="table-card" style="padding: 40px; max-width: 500px; margin: 0 auto;">
+                            <h2 style="color: #1a2b4c; font-size: 18px; margin-bottom: 25px;">Revalidando documentos...</h2>
+                            
+                            <div class="motor-list" style="margin-bottom: 30px;">
+                                <div class="motor-list-item"><span class="motor-check" style="background:#e2e8f0; color:#4a5568" id="rev-check-1">↻</span><span class="motor-label" style="width:100%">Documentos aduaneros</span></div>
+                                <div class="motor-list-item"><span class="motor-check" style="background:#e2e8f0; color:#4a5568" id="rev-check-2">↻</span><span class="motor-label" style="width:100%">Datos de mercancía</span></div>
+                                <div class="motor-list-item"><span class="motor-check" style="background:#e2e8f0; color:#4a5568" id="rev-check-3">↻</span><span class="motor-label" style="width:100%">Requisitos fitosanitarios (SENASAG)</span></div>
+                                <div class="motor-list-item"><span class="motor-check" style="background:#e2e8f0; color:#4a5568" id="rev-check-4">↻</span><span class="motor-label" style="width:100%">Requisitos de ingreso (SAG Chile)</span></div>
+                                <div class="motor-list-item"><span class="motor-check" style="background:#e2e8f0; color:#4a5568" id="rev-check-5">↻</span><span class="motor-label" style="width:100%">Acuerdo comercial (ACE)</span></div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: flex-end; font-size: 12px; color: #4a5568; margin-bottom: 8px; font-weight: 600;">
+                                <span id="reval-pct">0%</span>
+                            </div>
+                            <div class="progress-container">
+                                <div id="reval-progress" class="progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 15. SIMULADOR DE RIESGO ADUANERO -->
+                    <div id="content-riesgo" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px;">
+                            <h2 style="color: #1a2b4c; font-size: 18px; margin-bottom: 25px;">Nivel de Riesgo Aduanero</h2>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                                <!-- Velocímetro -->
+                                <div style="text-align: center; border: 1px solid #edf2f7; border-radius: 8px; padding: 30px; position: relative;">
+                                    <div class="gauge-container">
+                                        <div class="gauge-arc"></div>
+                                        <div class="gauge-center-mask"></div>
+                                        <div class="gauge-needle" id="gauge-needle"></div>
+                                        <div class="gauge-pin"></div>
+                                    </div>
+                                    <div id="risk-level-text" style="font-size: 20px; font-weight: bold; margin-top: 10px;">RIESGO BAJO</div>
+                                    <p id="risk-desc-text" style="color: #4a5568; font-size: 13px; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                        <span style="color:#22c55e; font-size:16px; font-weight:bold;">✓</span> La operación presenta un bajo riesgo de rechazo en la aduana.
+                                    </p>
+                                </div>
+                                
+                                <!-- Factores Analizados -->
+                                <div style="border: 1px solid #edf2f7; border-radius: 8px; padding: 20px;">
+                                    <h3 style="font-size: 14px; margin-bottom: 15px; color: #1a2b4c;">Factores analizados</h3>
+                                    <ul class="motor-list" style="border: none; padding: 0; margin: 0; background: transparent;">
+                                        <li class="motor-list-item"><span class="motor-check" id="rf-1">✓</span><span class="motor-label" style="width:100%">Inconsistencias documentales</span></li>
+                                        <li class="motor-list-item"><span class="motor-check" id="rf-2">✓</span><span class="motor-label" style="width:100%">Requisitos fitosanitarios</span></li>
+                                        <li class="motor-list-item"><span class="motor-check" id="rf-3">✓</span><span class="motor-label" style="width:100%">Origen y acuerdo comercial</span></li>
+                                        <li class="motor-list-item"><span class="motor-check" id="rf-4">✓</span><span class="motor-label" style="width:100%">Clasificación arancelaria</span></li>
+                                        <li class="motor-list-item"><span class="motor-check" id="rf-5">✓</span><span class="motor-label" style="width:100%">País destino</span></li>
+                                        <li class="motor-list-item" style="border-bottom:none;"><span class="motor-check" id="rf-6">✓</span><span class="motor-label" style="width:100%">Historial del exportador</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 15px; margin-top: 25px; justify-content: flex-end;">
+                                <button type="button" class="btn-blue-dark">VER DETALLE</button>
+                                <button type="button" class="btn-green-action" id="btn-finalizar-exportacion-real">FINALIZAR EXPORTACIÓN</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 21. APROBACIÓN FINAL -->
+                    <div id="content-aprobacion" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px; max-width: 500px; margin: 0 auto;">
+                            <h2 style="color: #1a2b4c; font-size: 16px; margin-bottom: 20px;">21. Aprobación final</h2>
+                            <h3 style="font-size: 18px; color: #1a2b4c; text-align: center; margin-bottom: 10px;">Aprobación de la Exportación</h3>
+                            
+                            <p id="aprobacion-msg" style="text-align: center; font-size: 13px; color: #4a5568; margin-bottom: 25px; line-height: 1.5;">
+                                Todos los documentos han sido validados correctamente. ¿Deseas aprobar la operación?
+                            </p>
+
+                            <div class="motor-list" style="margin-bottom: 25px;">
+                                <div class="motor-list-item"><span class="motor-check" id="aprob-check-bolivia">✓</span><span class="motor-label" style="width: 80%;">Documentos aduaneros</span><span class="motor-value" id="aprob-count-bolivia">8/8</span></div>
+                                <div class="motor-list-item"><span class="motor-check" id="aprob-check-senasag">✓</span><span class="motor-label" style="width: 80%;">SENASAG</span><span class="motor-value" id="aprob-count-senasag">5/5</span></div>
+                                <div class="motor-list-item"><span class="motor-check" id="aprob-check-chile">✓</span><span class="motor-label" style="width: 80%;">SAG Chile</span><span class="motor-value" id="aprob-count-chile">6/6</span></div>
+                                <div class="motor-list-item"><span class="motor-check" id="aprob-check-ace">✓</span><span class="motor-label" style="width: 80%;">ACE</span><span class="motor-value" id="aprob-count-ace">2/2</span></div>
+                            </div>
+
+                            <div id="aprobacion-actions" style="display: flex; flex-direction: column; gap: 10px;">
+                                <button type="button" class="btn-green-action" id="btn-aprobar-definitivo" style="width: 100%;">APROBAR EXPORTACIÓN</button>
+                                <button type="button" class="btn-outline hidden" id="btn-revisar-antes-aprobar" style="width: 100%;">REVISAR INCONSISTENCIAS</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 22. EMBALAJE Y NIMF 15 (NUEVO PANTALLA ADICIONAL) -->
+                    <div id="content-embalaje" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px; max-width: 600px; margin: 0 auto;">
+                            <h2 style="color: #1a2b4c; font-size: 16px; margin-bottom: 20px;">22. Pantalla adicional - Control de embalaje y NIMF 15</h2>
+                            <h3 style="font-size: 15px; color: #1a2b4c; margin-bottom: 15px;">Verificación de embalaje y madera</h3>
+                            
+                            <div class="verify-list">
+                                <div class="verify-item"><span>Envases: Nuevos de primer uso</span> <span class="verify-badge cumple">Cumple</span></div>
+                                <div class="verify-item"><span>Etiquetado y rotulado</span> <span class="verify-badge cumple">Cumple</span></div>
+                                <div class="verify-item"><span>Paletizado</span> <span class="verify-badge cumple">Cumple</span></div>
+                                <div class="verify-item"><span>NIMF 15 (madera)</span> <span class="verify-badge cumple">Cumple</span></div>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <span style="font-size: 13px; color: #1a2b4c; font-weight: 600;">Detalle de cajas</span>
+                                <span style="font-size: 13px; color: #16a34a; font-weight: bold; background: #f0fdf4; padding: 4px 10px; border-radius: 4px;">500 cajas - Etiqueta OK</span>
+                            </div>
+
+                            <div class="image-placeholder image-pallets">📦📦</div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <button type="button" class="btn-blue-dark">VER DETALLE</button>
+                                <button type="button" class="btn-green-action" id="btn-sig-precintos">CONTINUAR ➔</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 23. CONTROL DE PRECINTOS Y TRAZABILIDAD (NUEVO PANTALLA ADICIONAL) -->
+                    <div id="content-precintos" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px; max-width: 600px; margin: 0 auto;">
+                            <h2 style="color: #1a2b4c; font-size: 16px; margin-bottom: 20px;">23. Pantalla adicional - Control de precintos y trazabilidad</h2>
+                            <h3 style="font-size: 15px; color: #1a2b4c; margin-bottom: 15px;">Control de precintos y trazabilidad</h3>
+                            
+                            <div class="verify-list">
+                                <div class="verify-item">
+                                    <span style="color:#718096; font-size: 12px; display:block; margin-bottom: 4px;">Número de precinto</span>
+                                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                                        <span style="font-weight: bold; font-size: 14px;">458921</span>
+                                        <span class="verify-badge coincide">Coincide</span>
+                                    </div>
+                                </div>
+                                <div class="verify-item">
+                                    <span style="color:#718096; font-size: 12px; display:block; margin-bottom: 4px;">Contenedor *</span>
+                                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                                        <span style="font-weight: bold; font-size: 14px;">TCLU 1214167</span>
+                                        <span class="verify-badge coincide">Coincide</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding: 15px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;">
+                                <div style="width: 40px; height: 40px; background: #16a34a; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold;">✓</div>
+                                <div>
+                                    <div style="font-weight: bold; font-size: 14px; color: #16a34a;">Registro</div>
+                                    <div style="font-size: 12px; color: #15803d;">Registro completo</div>
+                                </div>
+                            </div>
+
+                            <div class="image-placeholder image-container">🚢</div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <button type="button" class="btn-blue-dark">VER HISTORIAL</button>
+                                <button type="button" class="btn-green-action" id="btn-sig-cumplimiento">CONTINUAR ➔</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 24. CUMPLIMIENTO NORMATIVO (NUEVO PANTALLA ADICIONAL) -->
+                    <div id="content-cumplimiento" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px; max-width: 600px; margin: 0 auto;">
+                            <h2 style="color: #1a2b4c; font-size: 16px; margin-bottom: 20px;">24. Pantalla adicional - Cumplimiento normativo</h2>
+                            <h3 style="font-size: 15px; color: #1a2b4c; margin-bottom: 20px;">Cumplimiento normativo</h3>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #edf2f7; padding-bottom: 10px;">
+                                <span style="font-size: 13px; color: #4a5568; font-weight: 600;">Resumen de la operación</span>
+                                <span class="status-badge status-aprobada" id="cumplimiento-validada" style="font-size: 12px; padding: 6px 12px;">✓ Validada</span>
+                            </div>
+
+                            <div style="display: flex; gap: 25px; margin-bottom: 25px; align-items: flex-start;">
+                                <div class="image-bananas">🍌</div>
+                                <div style="flex: 1;">
+                                    <div class="cump-row"><span class="cump-label">Producto:</span> <span class="cump-val">Plátano fresco</span></div>
+                                    <div class="cump-row"><span class="cump-label">Destino:</span> <span class="cump-val" style="color: #e53e3e;">Chile</span></div>
+                                    <div class="cump-row"><span class="cump-label">Acuerdo:</span> <span class="cump-val" style="color: #d97706;">ACE</span></div>
+                                    <div class="cump-row"><span class="cump-label">Fecha de salida:</span> <span class="cump-val">25/05/2025</span></div>
+                                    <div class="cump-row"><span class="cump-label">Riesgo:</span> <span class="cump-val" id="cumplimiento-riesgo" style="color: #16a34a;">Bajo</span></div>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn-blue-dark" id="btn-finalizar-todo" style="width: 100%; padding: 14px;">Descargar reporte completo y Finalizar</button>
+                        </div>
+                    </div>
+
+
+                    <!-- SECCIÓN: 7. OCR INTELIGENTE -->
+                    <div id="content-ocr" class="app-section hidden">
+                        <div class="table-card" style="padding: 30px;">
+                            <h2 style="color: #1a2b4c; font-size: 16px; margin-bottom: 25px;">Extrayendo información con OCR...</h2>
+                            
+                            <div class="ocr-grid">
+                                <div class="doc-preview">
+                                    <div style="position: absolute; top: 15px; right: 15px; font-size: 10px; color: #a0aec0; font-weight: bold;">SCAN_DOC_001.PDF</div>
+                                    <div class="doc-preview-lines"></div>
+                                    <div style="position: absolute; top: 30%; left: 0; width: 100%; height: 5px; background: rgba(22, 163, 74, 0.4); box-shadow: 0 0 10px rgba(22,163,74,0.5); animation: scan 2s infinite linear;"></div>
+                                </div>
+                                
+                                <div>
+                                    <h3 style="font-size: 14px; color: #1a2b4c; margin-bottom: 15px;">Información extraída</h3>
+                                    <div class="info-row"><span class="info-label">Factura N°</span><span class="info-value">001-458</span></div>
+                                    <div class="info-row"><span class="info-label">Fecha</span><span class="info-value">12/05/2025</span></div>
+                                    <div class="info-row"><span class="info-label">Peso neto</span><span class="info-value">10,000 kg</span></div>
+                                    <div class="info-row"><span class="info-label">Peso bruto</span><span class="info-value">11,500 kg</span></div>
+                                    <div class="info-row"><span class="info-label">Valor FOB</span><span class="info-value">USD 8,000.00</span></div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 20px;">
+                                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #4a5568; margin-bottom: 8px; font-weight: 600;">
+                                    <span>Extrayendo datos...</span><span id="ocr-progress-text">0%</span>
+                                </div>
+                                <div class="progress-container">
+                                    <div id="ocr-progress-bar" class="progress-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: 8. PROCESAMIENTO AUTOMÁTICO -->
+                    <div id="content-procesamiento" class="app-section hidden">
+                        <div class="table-card" style="padding: 40px;">
+                            <h2 style="color: #0f172a; font-size: 18px; margin-bottom: 30px;">Procesando y validando documentos...</h2>
+                            
+                            <div class="proc-steps-wrapper">
+                                <div class="proc-step"><div class="proc-circle">📄</div><span class="proc-label">OCR</span></div>
+                                <div class="proc-line"></div>
+                                <div class="proc-step"><div class="proc-circle">🛡️</div><span class="proc-label">Comparación</span></div>
+                                <div class="proc-line"></div>
+                                <div class="proc-step"><div class="proc-circle">👁️</div><span class="proc-label">Validación</span></div>
+                                <div class="proc-line"></div>
+                                <div class="proc-step"><div class="proc-circle">🗄️</div><span class="proc-label">Resultados</span></div>
+                            </div>
+
+                            <ul class="proc-checklist">
+                                <li><div class="square-check">✓</div> Extrayendo información</li>
+                                <li><div class="square-check">✓</div> Comparando datos</li>
+                                <li><div class="square-check">✓</div> Validando campos</li>
+                                <li><div class="square-check">✓</div> Generando resultados</li>
+                            </ul>
+
+                            <div style="margin-top: 30px; margin-bottom: 25px;">
+                                <div style="display: flex; justify-content: flex-end; font-size: 12px; color: #334155; margin-bottom: 8px; font-weight: 600;"><span>100%</span></div>
+                                <div class="progress-container"><div class="progress-bar" style="width: 100%;"></div></div>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-end;">
+                                <button type="button" class="btn-blue-dark" id="btn-siguiente-procesamiento">Siguiente</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE NAVEGACIÓN Y LÓGICA -->
+    <script>
+        const loginForm = document.getElementById('login-form');
+        const loginView = document.getElementById('login-view');
+        const appView = document.getElementById('app-view');
+        const mainHeaderTitle = document.getElementById('main-header-title');
+        
+        const allSections = document.querySelectorAll('.app-section');
+
+        const contentDashboard = document.getElementById('content-dashboard');
+        const contentExportaciones = document.getElementById('content-exportaciones');
+        const contentDocumentosReferencia = document.getElementById('content-documentos-referencia'); 
+        const contentAlertas = document.getElementById('content-alertas'); 
+        const contentEstadisticas = document.getElementById('content-estadisticas');
+        const contentAsistente = document.getElementById('content-asistente');
+        const contentListaReportes = document.getElementById('content-lista-reportes');
+        const contentGenerarReporte = document.getElementById('content-generar-reporte');
+        const contentCompartir = document.getElementById('content-compartir');
+        
+        const contentNuevaOp = document.getElementById('content-nueva-op');
+        const contentIdentificacion = document.getElementById('content-identificacion');
+        const contentMotor = document.getElementById('content-motor-requisitos');
+        const contentResultado = document.getElementById('content-resultado');
+        const contentInconsistencias = document.getElementById('content-inconsistencias');
+        const contentDetalleError = document.getElementById('content-detalle-error');
+        const contentCorreccion = document.getElementById('content-correccion');
+        const contentRevalidacion = document.getElementById('content-revalidacion');
+        const contentRiesgo = document.getElementById('content-riesgo');
+        const contentAprobacion = document.getElementById('content-aprobacion');
+        
+        // Fases Adicionales
+        const contentEmbalaje = document.getElementById('content-embalaje');
+        const contentPrecintos = document.getElementById('content-precintos');
+        const contentCumplimiento = document.getElementById('content-cumplimiento');
+
+        const contentDocumentos = document.getElementById('content-documentos'); 
+        const contentOcr = document.getElementById('content-ocr');
+        const contentProcesamiento = document.getElementById('content-procesamiento');
+
+        let exportCounter = 5;
+        let errorDocActual = ''; 
+        let currentCriticos = 0; 
+        let currentAdvertencias = 0;
+        let errorCajasResuelto = false; 
+        let operacionFueCorreccionValor = false;
+        let botonPresionado = null; 
+
+        // 1. INICIO DE SESIÓN
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            loginView.classList.add('hidden');
+            appView.classList.remove('hidden');
+            showSection(contentDashboard, 'Dashboard - Exportación', document.getElementById('nav-dashboard'));
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', handleLogout);
+        document.getElementById('nav-logout-btn').addEventListener('click', handleLogout);
+        function handleLogout() {
+            appView.classList.add('hidden');
+            loginView.classList.remove('hidden');
+            loginForm.reset();
+        }
+
+        // 2. FUNCIÓN DE NAVEGACIÓN
+        function showSection(sectionToShow, title, activeNavBtn = null) {
+            allSections.forEach(sec => sec.classList.add('hidden'));
+            sectionToShow.classList.remove('hidden');
+            mainHeaderTitle.textContent = title;
+            if(activeNavBtn) {
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                activeNavBtn.classList.add('active');
+            }
+        }
+
+        // 3. RESETEO DE OPERACIÓN
+        function resetApp() {
+            errorCajasResuelto = false;
+            operacionFueCorreccionValor = false;
+            document.getElementById('form-nueva-op').reset();
+
+            document.querySelectorAll('#content-documentos [data-default]').forEach(el => {
+                el.className = el.getAttribute('data-default');
+                el.textContent = el.getAttribute('data-default-text');
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.tab-btn[data-target="tab-bolivia"]').classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+            document.getElementById('tab-bolivia').classList.remove('hidden');
+        }
+
+        // 4. MENÚ LATERAL Y BOTONES SIMPLES
+        document.getElementById('nav-dashboard').addEventListener('click', function() { showSection(contentDashboard, 'Dashboard - Exportación', this); });
+        document.getElementById('nav-exportaciones').addEventListener('click', function() { showSection(contentExportaciones, 'Exportaciones', this); });
+        document.getElementById('nav-documentos-referencia').addEventListener('click', function() { showSection(contentDocumentosReferencia, 'Catálogo de Documentos', this); });
+        document.getElementById('nav-alertas').addEventListener('click', function() { showSection(contentAlertas, '26. Notificaciones y Alertas', this); });
+        document.getElementById('nav-estadisticas').addEventListener('click', function() { showSection(contentEstadisticas, '17. Estadísticas e Historial', this); });
+        document.getElementById('nav-asistente').addEventListener('click', function() { showSection(contentAsistente, '18. Asistente Virtual Aduanero', this); });
+        document.getElementById('nav-reportes').addEventListener('click', function() { showSection(contentListaReportes, '19. Reportes de exportaciones', this); });
+
+        document.querySelectorAll('.btn-nueva-op-global').forEach(btn => {
+            btn.addEventListener('click', () => {
+                resetApp(); 
+                showSection(contentNuevaOp, '3. Nueva operación de exportación', document.getElementById('nav-nueva-op'));
+            });
+        });
+
+        document.getElementById('btn-continuar-a-identificacion').addEventListener('click', () => { showSection(contentIdentificacion, '4. Identificación de producto y destino'); });
+        document.getElementById('btn-volver-nueva-op').addEventListener('click', () => { showSection(contentNuevaOp, '3. Nueva operación de exportación'); });
+        document.getElementById('btn-ver-detalle-req').addEventListener('click', () => { showSection(contentDocumentos, '6. Documentos requeridos'); });
+        document.getElementById('btn-volver-identificacion').addEventListener('click', () => { showSection(contentIdentificacion, '4. Identificación de producto y destino'); });
+        document.getElementById('btn-volver-desde-resultado').addEventListener('click', () => { showSection(contentIdentificacion, '4. Identificación de producto y destino'); });
+
+        // 5. REPORTES
+        function selectReportOption(element) {
+            document.querySelectorAll('.report-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+        document.getElementById('btn-generar-reporte').addEventListener('click', () => { showSection(contentCompartir, '20. Compartir reportes'); });
+        document.getElementById('btn-volver-reportes').addEventListener('click', () => { showSection(contentGenerarReporte, 'Generar Reporte'); });
+        document.getElementById('btn-volver-lista-reportes').addEventListener('click', () => { showSection(contentListaReportes, '19. Reportes de exportaciones'); });
+        
+        document.addEventListener('click', function(e) {
+            if(e.target.closest('.btn-abrir-generador')) {
+                const btn = e.target.closest('.btn-abrir-generador');
+                const expId = btn.getAttribute('data-exp');
+                document.getElementById('reporte-exp-title').textContent = expId;
+                document.getElementById('link-reporte-nombre').textContent = expId;
+                showSection(contentGenerarReporte, 'Generar Reporte');
+            }
+        });
+
+        // 6. VALIDACIÓN EN TIEMPO REAL
+        function updateValidationResults() {
+            let criticos = 0; let advertencias = 0; let correctos = 0; let totalDocs = 0; let incHTML = '';
+            
+            if(!errorCajasResuelto) {
+                criticos++; 
+                incHTML += `
+                    <div class="inc-item red" onclick="abrirDetalleErrorCajas()">
+                        <div class="inc-icon red">✓</div>
+                        <div class="inc-details"><div class="inc-title">Cantidad de cajas no coincide</div><div class="inc-desc">Factura: 500 | Packing List: 480</div></div>
+                        <div class="inc-badge red">Crítico</div>
+                    </div>
+                `;
+            }
+
+            let stats = { 'tab-bolivia': { total: 0, loaded: 0 }, 'tab-senasag': { total: 0, loaded: 0 }, 'tab-chile': { total: 0, loaded: 0 }, 'tab-ace': { total: 0, loaded: 0 } };
+
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                let tabId = tab.id;
+                tab.querySelectorAll('.doc-item').forEach(item => {
+                    totalDocs++; stats[tabId].total++;
+                    let docName = item.querySelector('.doc-name').textContent.replace(/[📄🌿🍇🌍]/g, '').trim();
+
+                    if(item.querySelector('.badge-cargado')) {
+                        correctos++; stats[tabId].loaded++;
+                    } else if(item.querySelector('.badge-pendiente-red')) {
+                        criticos++;
+                        incHTML += `
+                            <div class="inc-item red" onclick="abrirDetalleError('${docName}', 'red')">
+                                <div class="inc-icon red">!</div>
+                                <div class="inc-details"><div class="inc-title">${docName} faltante</div><div class="inc-desc">Documento requerido obligatorio.</div></div>
+                                <div class="inc-badge red">Crítico</div>
+                            </div>
+                        `;
+                    } else if(item.querySelector('.badge-pendiente-orange')) {
+                        advertencias++;
+                        incHTML += `
+                            <div class="inc-item orange" onclick="abrirDetalleError('${docName}', 'orange')">
+                                <div class="inc-icon orange">!</div>
+                                <div class="inc-details"><div class="inc-title">${docName} requiere revisión</div><div class="inc-desc">Documento pendiente de carga.</div></div>
+                                <div class="inc-badge orange">Advertencia</div>
+                            </div>
+                        `;
+                    }
+                });
+            });
+
+            currentCriticos = criticos; currentAdvertencias = advertencias;
+            document.getElementById('val-docs').textContent = totalDocs;
+            document.getElementById('val-correctos').textContent = correctos;
+            document.getElementById('val-advertencias').textContent = advertencias;
+            document.getElementById('val-criticos').textContent = criticos;
+
+            const calcPct = (loaded, total) => total === 0 ? 100 : Math.round((loaded / total) * 100);
+            document.getElementById('pct-bolivia').textContent = calcPct(stats['tab-bolivia'].loaded, stats['tab-bolivia'].total) + '%';
+            document.getElementById('pct-senasag').textContent = calcPct(stats['tab-senasag'].loaded, stats['tab-senasag'].total) + '%';
+            document.getElementById('pct-chile').textContent = calcPct(stats['tab-chile'].loaded, stats['tab-chile'].total) + '%';
+            document.getElementById('pct-ace').textContent = calcPct(stats['tab-ace'].loaded, stats['tab-ace'].total) + '%';
+
+            let score = Math.max(0, Math.round((correctos / totalDocs) * 100));
+            if(!errorCajasResuelto) score -= 8; 
+            if(score < 0) score = 0;
+
+            document.getElementById('val-score').textContent = score + '%';
+            document.getElementById('val-score-circle').style.background = `conic-gradient(#16a34a 0% ${score}%, #e2e8f0 ${score}% 100%)`;
+            
+            const statusIcon = document.getElementById('val-status-icon');
+            const statusText = document.getElementById('val-status-text');
+
+            if (criticos === 0 && advertencias === 0) {
+                statusIcon.innerHTML = `<span style="color: #16a34a; font-size: 18px;">✓</span> Revisión completada con éxito`;
+                statusText.textContent = 'Todos los documentos están cargados y correctos.';
+                if (incHTML === '') incHTML = '<div style="text-align: center; color: #16a34a; padding: 20px; font-weight: bold;">¡Excelente! No hay ninguna inconsistencia.</div>';
+            } else {
+                statusIcon.innerHTML = `<span style="color: #1a2b4c; font-size: 18px;">↻</span> Revisión completada`;
+                statusText.textContent = 'Se detectaron inconsistencias que deben ser corregidas.';
+            }
+
+            document.getElementById('inconsistencias-list').innerHTML = incHTML;
+            document.getElementById('btn-ver-todas').textContent = `VER TODAS (${criticos + advertencias})`;
+        }
+
+        // 7. FLUJO DE DETALLES Y CORRECCIÓN
+        window.abrirDetalleError = function(docName, type) {
+            operacionFueCorreccionValor = false; 
+            errorDocActual = docName;
+            document.getElementById('det-error-title').textContent = `${docName} faltante`;
+            document.getElementById('det-error-doc').textContent = docName;
+            document.getElementById('det-error-status').textContent = 'No encontrado';
+            document.getElementById('det-error-desc').textContent = `El envío requiere ${docName} para su ingreso/validación.`;
+            document.getElementById('corr-title').textContent = `Falta ${docName}`;
+            document.getElementById('corr-actual-text').innerHTML = `Estado actual: <strong class="text-red-crit">Documento faltante</strong>`;
+            document.getElementById('corr-sugerido-text').innerHTML = `Estado correcto: Subir documento requerido.`;
+            document.getElementById('corr-opt-1').textContent = `Ignorar advertencia (Bajo tu riesgo)`;
+            document.getElementById('corr-opt-2').textContent = `Ir al panel de carga de documentos`;
+            showSection(contentDetalleError, '11. Detalle del error');
+        };
+
+        window.abrirDetalleErrorCajas = function() {
+            operacionFueCorreccionValor = true;
+            document.getElementById('det-error-title').textContent = `Cantidad de cajas no coincide`;
+            document.getElementById('det-error-doc').textContent = `Factura (500) vs Packing List (480)`;
+            document.getElementById('det-error-status').textContent = 'Diferencia detectada';
+            document.getElementById('det-error-desc').textContent = `Los valores extraídos de la factura y el Packing List sobre la cantidad de cajas no coinciden.`;
+            document.getElementById('corr-title').textContent = `Cantidad de cajas no coincide`;
+            document.getElementById('corr-actual-text').innerHTML = `Valor actual en sistema: <strong class="text-red-crit">480 cajas</strong>`;
+            document.getElementById('corr-sugerido-text').innerHTML = `Valor sugerido por la factura: <strong>500 cajas</strong>`;
+            document.getElementById('corr-opt-1').textContent = `Editar manualmente`;
+            document.getElementById('corr-opt-2').textContent = `Usar valor sugerido (500 cajas)`;
+            showSection(contentDetalleError, '11. Detalle del error');
+        };
+
+        document.getElementById('btn-ver-recomendacion').addEventListener('click', () => { showSection(contentCorreccion, '13. Corrección guiada'); });
+        document.getElementById('btn-volver-inconsistencias').addEventListener('click', () => { showSection(contentInconsistencias, '10. Centro de inconsistencias'); });
+        document.getElementById('btn-volver-detalle').addEventListener('click', () => { showSection(contentDetalleError, '11. Detalle del error'); });
+
+        document.querySelectorAll('.radio-option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                document.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        document.getElementById('btn-aplicar-correccion').addEventListener('click', () => {
+            if (operacionFueCorreccionValor) {
+                showSection(contentRevalidacion, '14. Revalidación automática');
+                const checks = [document.getElementById('rev-check-1'), document.getElementById('rev-check-2'), document.getElementById('rev-check-3'), document.getElementById('rev-check-4'), document.getElementById('rev-check-5')];
+                const revProg = document.getElementById('reval-progress');
+                const revPct = document.getElementById('reval-pct');
+                
+                checks.forEach(c => { c.style.background = '#e2e8f0'; c.style.color = '#4a5568'; c.textContent = '↻'; });
+                revProg.style.width = '0%'; revPct.textContent = '0%';
+
+                let progress = 0; let checkIdx = 0;
+                const revInt = setInterval(() => {
+                    progress += 4;
+                    if(progress > 100) progress = 100;
+                    revProg.style.width = progress + '%';
+                    revPct.textContent = progress + '%';
+                    if (progress % 20 === 0 && checkIdx < 5) {
+                        checks[checkIdx].style.background = '#16a34a';
+                        checks[checkIdx].style.color = '#fff';
+                        checks[checkIdx].textContent = '✓';
+                        checkIdx++;
+                    }
+                    if (progress >= 100) {
+                        clearInterval(revInt);
+                        setTimeout(() => {
+                            errorCajasResuelto = true; 
+                            updateValidationResults();
+                            showSection(contentResultado, '9. Resultado general');
+                        }, 800);
+                    }
+                }, 100);
+            } else {
+                showSection(contentDocumentos, '6. Documentos requeridos');
+            }
+        });
+
+        document.getElementById('btn-finalizar-motor').addEventListener('click', () => { updateValidationResults(); showSection(contentResultado, '9. Resultado general'); });
+        document.getElementById('btn-ver-detalle-resultado').addEventListener('click', () => { showSection(contentInconsistencias, '10. Centro de inconsistencias'); });
+        document.getElementById('btn-volver-resultado').addEventListener('click', () => { showSection(contentResultado, '9. Resultado general'); });
+        document.getElementById('btn-corregir-docs').addEventListener('click', () => { showSection(contentDocumentos, '6. Documentos requeridos'); });
+        document.getElementById('btn-ir-resultados').addEventListener('click', () => { updateValidationResults(); showSection(contentResultado, '9. Resultado general'); });
+
+        // 8. RIESGO Y APROBACIÓN FINAL
+        document.getElementById('btn-finalizar-operacion').addEventListener('click', () => {
+            const needle = document.getElementById('gauge-needle');
+            const levelText = document.getElementById('risk-level-text');
+            const descText = document.getElementById('risk-desc-text');
+            const rf1 = document.getElementById('rf-1');
+            const rf2 = document.getElementById('rf-2');
+
+            if (currentCriticos > 0) {
+                needle.style.transform = 'translateX(-50%) rotate(60deg)';
+                levelText.textContent = 'RIESGO ALTO'; levelText.style.color = '#ef4444';
+                descText.innerHTML = '<span style="color:#ef4444; font-size:16px; font-weight:bold;">✖</span> La operación presenta un alto riesgo de rechazo aduanero. Se requiere corregir errores.';
+                rf1.style.background = '#ef4444'; rf1.textContent = '✖';
+                rf2.style.background = '#ef4444'; rf2.textContent = '✖';
+            } else if (currentAdvertencias > 0) {
+                needle.style.transform = 'translateX(-50%) rotate(0deg)';
+                levelText.textContent = 'RIESGO MEDIO'; levelText.style.color = '#f59e0b';
+                descText.innerHTML = '<span style="color:#f59e0b; font-size:16px; font-weight:bold;">!</span> La operación presenta observaciones que podrían causar retrasos.';
+                rf1.style.background = '#f59e0b'; rf1.textContent = '!';
+                rf2.style.background = '#16a34a'; rf2.textContent = '✓';
+            } else {
+                needle.style.transform = 'translateX(-50%) rotate(-60deg)';
+                levelText.textContent = 'RIESGO BAJO'; levelText.style.color = '#22c55e';
+                descText.innerHTML = '<span style="color:#22c55e; font-size:16px; font-weight:bold;">✓</span> La operación presenta un bajo riesgo de rechazo en la aduana.';
+                rf1.style.background = '#16a34a'; rf1.textContent = '✓';
+                rf2.style.background = '#16a34a'; rf2.textContent = '✓';
+            }
+            showSection(contentRiesgo, '15. Simulador de riesgo aduanero');
+        });
+
+        // Del Simulador de Riesgo a Aprobación Final
+        document.getElementById('btn-finalizar-exportacion-real').addEventListener('click', () => {
+            const msg = document.getElementById('aprobacion-msg');
+            const btnRevisar = document.getElementById('btn-revisar-antes-aprobar');
+            const btnAprobar = document.getElementById('btn-aprobar-definitivo');
+
+            if (currentCriticos === 0 && currentAdvertencias === 0 && errorCajasResuelto) {
+                msg.innerHTML = 'Todos los documentos han sido validados correctamente. ¿Deseas aprobar la operación?';
+                msg.style.color = '#4a5568';
+                btnRevisar.classList.add('hidden');
+                btnAprobar.className = 'btn-green-action'; btnAprobar.textContent = 'APROBAR EXPORTACIÓN';
+            } else {
+                msg.innerHTML = '<span style="color:#e53e3e; font-weight:bold;">Atención:</span> La operación presenta inconsistencias o documentos faltantes. ¿Deseas aprobarla bajo tu propio riesgo?';
+                btnRevisar.classList.remove('hidden');
+                btnAprobar.className = 'btn-red-action'; btnAprobar.textContent = 'APROBAR DE TODAS FORMAS';
+            }
+
+            const countBoliviaTotal = document.querySelectorAll('#tab-bolivia .doc-item').length;
+            const countBoliviaLoaded = document.querySelectorAll('#tab-bolivia .badge-cargado').length;
+            document.getElementById('aprob-count-bolivia').textContent = `${countBoliviaLoaded}/${countBoliviaTotal}`;
+            configCheck('aprob-check-bolivia', countBoliviaLoaded, countBoliviaTotal);
+
+            const countSenasagTotal = document.querySelectorAll('#tab-senasag .doc-item').length;
+            const countSenasagLoaded = document.querySelectorAll('#tab-senasag .badge-cargado').length;
+            document.getElementById('aprob-count-senasag').textContent = `${countSenasagLoaded}/${countSenasagTotal}`;
+            configCheck('aprob-check-senasag', countSenasagLoaded, countSenasagTotal);
+
+            const countChileTotal = document.querySelectorAll('#tab-chile .doc-item').length;
+            const countChileLoaded = document.querySelectorAll('#tab-chile .badge-cargado').length;
+            document.getElementById('aprob-count-chile').textContent = `${countChileLoaded}/${countChileTotal}`;
+            configCheck('aprob-check-chile', countChileLoaded, countChileTotal);
+
+            const countAceTotal = document.querySelectorAll('#tab-ace .doc-item').length;
+            const countAceLoaded = document.querySelectorAll('#tab-ace .badge-cargado').length;
+            document.getElementById('aprob-count-ace').textContent = `${countAceLoaded}/${countAceTotal}`;
+            configCheck('aprob-check-ace', countAceLoaded, countAceTotal);
+
+            showSection(contentAprobacion, '21. Aprobación final');
+        });
+
+        function configCheck(id, loaded, total) {
+            const el = document.getElementById(id);
+            if (loaded === total) { el.style.background = '#16a34a'; el.textContent = '✓'; } 
+            else { el.style.background = '#f59e0b'; el.textContent = '!'; }
+        }
+
+        document.getElementById('btn-revisar-antes-aprobar').addEventListener('click', () => { showSection(contentInconsistencias, '10. Centro de inconsistencias'); });
+
+        // ==========================================
+        // FLUJO NUEVO: PANTALLAS ADICIONALES (EMBALAJE, PRECINTOS Y CUMPLIMIENTO)
+        // ==========================================
+        document.getElementById('btn-aprobar-definitivo').addEventListener('click', () => {
+            showSection(contentEmbalaje, '22. Pantalla adicional - Control de embalaje y NIMF 15');
+        });
+
+        document.getElementById('btn-sig-precintos').addEventListener('click', () => {
+            showSection(contentPrecintos, '23. Pantalla adicional - Control de precintos y trazabilidad');
+        });
+
+        document.getElementById('btn-sig-cumplimiento').addEventListener('click', () => {
+            // Actualizar riesgo en la pantalla final de cumplimiento
+            const riesgoFinalTexto = document.getElementById('cumplimiento-riesgo');
+            const validadaBadge = document.getElementById('cumplimiento-validada');
+            
+            if (currentCriticos > 0 || !errorCajasResuelto) {
+                riesgoFinalTexto.textContent = 'Alto';
+                riesgoFinalTexto.style.color = '#ef4444';
+                validadaBadge.innerHTML = '✖ Con Observaciones';
+                validadaBadge.className = 'status-badge status-obs';
+            } else if (currentAdvertencias > 0) {
+                riesgoFinalTexto.textContent = 'Medio';
+                riesgoFinalTexto.style.color = '#f59e0b';
+                validadaBadge.innerHTML = '↻ En revisión';
+                validadaBadge.className = 'status-badge status-revision';
+            } else {
+                riesgoFinalTexto.textContent = 'Bajo';
+                riesgoFinalTexto.style.color = '#16a34a';
+                validadaBadge.innerHTML = '✓ Validada';
+                validadaBadge.className = 'status-badge status-aprobada';
+            }
+
+            showSection(contentCumplimiento, '24. Pantalla adicional - Cumplimiento normativo');
+        });
+
+        document.getElementById('btn-finalizar-todo').addEventListener('click', () => {
+            let statusClass = 'status-aprobada'; let statusText = 'Aprobada';
+            if (currentCriticos > 0 || !errorCajasResuelto) {
+                statusClass = 'status-obs'; statusText = 'Aprobada con Obs.';
+            } else if (currentAdvertencias > 0) {
+                statusClass = 'status-revision'; statusText = 'En revisión';
+            }
+
+            const expIdStr = String(exportCounter).padStart(4, '0');
+            
+            const newExpRow = document.createElement('tr');
+            newExpRow.style.backgroundColor = '#f0fdf4';
+            newExpRow.innerHTML = `<td>📄 EXP-${expIdStr}</td><td>Plátano fresco</td><td>Chile</td><td><span class="status-badge ${statusClass}">${statusText}</span></td><td>25/05/2025</td>`;
+            const tbodyExport = document.getElementById('export-table-body');
+            tbodyExport.insertBefore(newExpRow, tbodyExport.firstChild);
+
+            const newReportRow = document.createElement('tr');
+            newReportRow.style.backgroundColor = '#f0fdf4';
+            newReportRow.innerHTML = `<td>📄 EXP-${expIdStr}</td><td>Plátano fresco</td><td>25/05/2025</td><td><button class="btn-outline btn-abrir-generador" data-exp="EXP-${expIdStr}" style="padding: 6px 12px; font-size: 11px;">Generar reporte</button></td>`;
+            const tbodyReport = document.getElementById('report-table-body');
+            tbodyReport.insertBefore(newReportRow, tbodyReport.firstChild);
+            
+            exportCounter++;
+            showSection(contentExportaciones, 'Exportaciones', document.getElementById('nav-exportaciones'));
+        });
+
+
+        // ANIMACIÓN MOTOR
+        function iniciarAnimacionMotor() {
+            for(let i=1; i<=4; i++) { document.getElementById('m-line-'+i).style.backgroundColor = '#e2e8f0'; }
+            const dot2 = document.getElementById('m-dot-2'); dot2.className = 'motor-dot lightblue'; dot2.textContent = '◐';
+            const dot3 = document.getElementById('m-dot-3'); dot3.className = 'motor-dot lightblue'; dot3.textContent = 'O';
+            const dot4 = document.getElementById('m-dot-4'); dot4.className = 'motor-dot lightblue'; dot4.textContent = 'D';
+            const dot5 = document.getElementById('m-dot-5'); dot5.className = 'motor-dot darkblue'; dot5.textContent = '⚡';
+            
+            const spinnerAnim = document.getElementById('motor-spinner-anim');
+            const spinnerText = document.getElementById('motor-spinner-text');
+            const btnFinalizar = document.getElementById('btn-finalizar-motor');
+
+            spinnerAnim.style.display = 'block'; spinnerText.textContent = 'Analizando normativa, acuerdos y requisitos...'; spinnerText.style.color = '#4a5568'; spinnerText.style.fontWeight = 'normal';
+            btnFinalizar.style.opacity = '0.5'; btnFinalizar.style.pointerEvents = 'none';
+
+            let step = 1;
+            const motorInterval = setInterval(() => {
+                if (step <= 4) {
+                    document.getElementById('m-line-'+step).style.backgroundColor = '#16a34a'; 
+                    const nextDot = document.getElementById('m-dot-'+(step+1));
+                    nextDot.className = 'motor-dot green'; nextDot.textContent = '✓';
+                    step++;
+                } else {
+                    clearInterval(motorInterval);
+                    spinnerAnim.style.display = 'none';
+                    spinnerText.textContent = 'Análisis completado exitosamente.'; spinnerText.style.color = '#16a34a'; spinnerText.style.fontWeight = 'bold';
+                    btnFinalizar.style.opacity = '1'; btnFinalizar.style.pointerEvents = 'auto';
+                }
+            }, 500);
+        }
+
+        document.getElementById('btn-continuar-a-motor').addEventListener('click', () => { 
+            showSection(contentMotor, '5. Motor automático de requisitos'); 
+            iniciarAnimacionMotor(); 
+        });
+
+        // PESTAÑAS (DOCUMENTOS)
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                tabContents.forEach(content => content.classList.add('hidden'));
+                document.getElementById(btn.getAttribute('data-target')).classList.remove('hidden');
+            });
+        });
+
+        // OCR INTERACTIVO DELEGADO
+        document.getElementById('content-documentos').addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-upload-doc') || e.target.classList.contains('badge-pendiente-orange')) {
+                botonPresionado = e.target; 
+                showSection(contentOcr, '7. OCR inteligente');
+                let progress = 0;
+                const ocrProgressBar = document.getElementById('ocr-progress-bar');
+                const ocrProgressText = document.getElementById('ocr-progress-text');
+                ocrProgressBar.style.width = '0%'; ocrProgressText.textContent = '0%';
+
+                const interval = setInterval(() => {
+                    progress += 4; 
+                    if (progress > 100) progress = 100;
+                    ocrProgressBar.style.width = progress + '%'; ocrProgressText.textContent = progress + '%';
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => { showSection(contentProcesamiento, '8. Procesamiento automático'); }, 600);
+                    }
+                }, 100);
+            }
+        });
+
+        document.getElementById('btn-siguiente-procesamiento').addEventListener('click', () => {
+            if (botonPresionado) {
+                botonPresionado.classList.remove('badge-pendiente-red', 'badge-pendiente-orange', 'btn-upload-doc');
+                botonPresionado.classList.add('badge-cargado');
+                botonPresionado.textContent = 'Cargado';
+                botonPresionado = null;
+            }
+            showSection(contentDocumentos, '6. Documentos requeridos');
+        });
+    </script>
+</body>
+</html>
